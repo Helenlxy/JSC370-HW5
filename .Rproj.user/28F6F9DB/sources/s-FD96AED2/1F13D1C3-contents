@@ -1,0 +1,250 @@
+---
+title: "Midterm Project - COVID-19 Data Analysis"
+author: "Xinyi Liu"
+date: "`r date()`"
+output:
+  #pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, message=FALSE}
+library(data.table)
+library(dtplyr)
+library(dplyr)
+library(ggplot2)
+#library(mgcv)
+library(knitr)
+#library(magrittr)
+library(lubridate)
+```
+
+# Introduction
+
+Since 2019, COVID-19 has been a pandemic throughout the world. Many analyses have been performed on all kinds of datasets for COVID-19 to find ways to fight it. For this project, we mainly analyzed COVID-19 data from [the COVID tracking project](https://covidtracking.com/). The COVID tracking project collected state-level metrics for COVID-19 cases, tests, hospitalizations, and outcomes from 2020/01/13 to 2021/03/07. The primary question we investigated with these data is whether the number and the trend of confirmed cases differ from state to state and whether it's associated with vaccination. 
+
+
+# Methods
+
+### COVID-19 Data
+
+The COVID tracking project provides data API to download data. There are 20780 state-level COVID-19 observations of 56 variables, including the number of positive cases, tests, deaths and individuals who are currently hospitalized with COVID-19 etc. 
+
+We focused on the `positiveIncrease` and `totalTestResultsIncrease` variable, which is the daily increase of confirmed cases and PCR tests calculated based on the previous day’s value. Following the suggestions in [this article](https://covidtracking.com/analysis-updates/how-day-of-week-effects-impact-covid-19-data), we used the 7-day average to show the general trends of data over a period of time due to the complexities of state reporting schedules and day-of-week effects. 
+
+Besides that, considering that different state has a different population which may affect the number of positive cases, we created a variable called `positiveIncreaseRate` which is calculated by dividing the `positiveIncrease` by the `totalTestResultsIncrease` (the rate will be 0 if `totalTestResultsIncrease` itself is 0) to calculate the daily confirmed case increase rate at state-level and used the rate to reflect the severity of COVID-19 for each state. PIR(`positiveIncreaseRate`) represents the percentage of daily PCR test results that are positive.
+
+To ensure the collected data is accurate and stabilized, we only analysed records in 2021 as the data collection at the beginning of the pandemic may contain many errors.
+
+```{r, echo=FALSE}
+covid_data <- data.table::fread("https://api.covidtracking.com/v1/states/daily.csv")
+covid_data <- covid_data %>%
+  subset(date >= 20210103 & date <= 20210306) #Choose these two dates as they are the beginning and the end of two weeks
+covid_data <- covid_data[, .(positiveIncrease, totalTestResultsIncrease, date, state)]
+# Coerce to Date class
+covid_data[, Date := as.Date(x=as.character(date), format='%Y%m%d',origin = lubridate::origin)]
+
+# Extract day of the week (Saturday = 6)
+covid_data[, Week_Day := as.numeric(format(covid_data$Date, format='%w'))]
+
+# Adjust end-of-week date (first saturday from the original Date)
+covid_data[, End_of_Week := covid_data$Date + (6 - covid_data$Week_Day)]
+
+# Aggregate over week and climate division
+covid_data <- covid_data[, .(positiveIncrease = mean(positiveIncrease),
+                       totalTestResultsIncrease = mean(totalTestResultsIncrease)),
+                   by = .(state, End_of_Week)]
+
+covid_data[, positiveIncreaseRate := ifelse(!totalTestResultsIncrease, 0, positiveIncrease / totalTestResultsIncrease)]
+```
+```{r, echo=FALSE}
+knitr::kable(summary(covid_data), caption = "A summary table for COVID-19 data")
+```
+
+After cleaning and wrangling the COVID-19 data, there are 504 records with 5 variables remaining in our data set. The mean national daily increase of confirmed cases is 2377, the mean national daily increase of PCR tests is 29741 and the mean national PIR is 12% from 2021-01-03 to 2021-03-06.
+
+### Vaccination Data
+
+Besides COVID-19 cases data, we also want to see if the difference between states is associated with vaccination. Therefore, we used the state-level COVID-19 Vaccinations data in the United States from [Centers for Disease Contol and Prevention](https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc). CDC also provides data API so that we can acquire vaccination data on 2021-01-03 which is the beginning date in our COVID-19 data records. We focused on the `Admin_Per_100K` variable which is the total number of doses administered per 100,000 census population based on the jurisdiction where the recipient lives.
+
+```{r, echo=FALSE}
+vacc_data <- data.table::fread("https://data.cdc.gov/resource/unsk-b7fc.csv?date=2021-01-03T00:00:00.000")
+vacc_data <- vacc_data[, .(location, admin_per_100k)]
+knitr::kable(summary(vacc_data), caption = "A summary table for vaccination data")
+```
+
+The mean number of doses administered per 100,000 census population in the U.S. is 1404 on 2021-01-03. 
+
+### State Data
+
+It's noticeable that there are 65 locations in the vaccination data while there are only 48 contiguous united states. This is because the `location` variable from CDC contains state, territory and federal entities. To keep only the contiguous united states, we used a [dataset](https://developers.google.com/public-data/docs/canonical/states_csv) that is used in Google DSPL. It also has the latitude and longitude of states which helps us draw maps in the following analysis.
+
+```{r, echo=FALSE}
+library(rvest)
+doc <- read_html("https://developers.google.com/public-data/docs/canonical/states_csv")
+states <- doc %>% html_table(fill=TRUE)
+states <- states[[1]]
+
+non_continuous <- c("AK", "HI", "PR", "DC")
+
+states <- subset(states, !(state %in% non_continuous))
+
+data.frame(variable = names(states),
+           type = sapply(states, typeof),
+           first_values = sapply(states, function(x) paste0(head(x),  collapse = ", ")),
+           row.names = NULL) %>% 
+  kable(caption = "A variable table for the state dataset")
+```
+
+Our state dataset has 4 variables, including the acronym and the full name of states, as well as the latitude and longitude.
+
+### Merge Dataset
+
+After acquiring, cleaning and wrangling the three data sets, we merged them into one data set for further investigation.
+
+```{r, echo=FALSE}
+
+merged_data <- merge(covid_data, vacc_data, by.x="state", by.y = "location")
+merged_data <- merge(merged_data, states, by="state")
+
+knitr::kable(summary(merged_data), caption = "A summary table for merged dataset")
+
+```
+
+Now the dataset for analysis contains 432 records with 9 variables.
+
+### Tools uses for data exploration
+
+The COVID-19 and vaccination datasets were imported using `data.table` while the state dataset was scraped from the website using `rvest`. Three datasets were merged using `dplyr`, we processed the date variables and created a new date variable `End_of_Week` with the `lubridate` package. All tables were formatted using `knitr` and `broom` and all figures were created using `ggplot2` except the map figure which was created using `leaflet`.
+
+# Preliminary Results
+
+We first want to see whether the trend of PIR differs from state to state. As there are 48 states and is hard to visualize them in one graph, we draw the trend of PIR for the 3 states that have the max total number of doses administered per 100,000 census population and for the 3 states that have the minimum value.
+
+```{r, echo=FALSE, message=FALSE}
+temp <- subset(vacc_data, location %in% states$state)
+
+admin_max_min_3 <- merge(head(arrange(temp,desc(admin_per_100k)), n = 3), tail(arrange(temp,desc(admin_per_100k)), n = 3), all=TRUE)
+admin_max_min_3_data <- subset(merged_data, state %in% admin_max_min_3$location)
+
+ggplot(data=admin_max_min_3_data, mapping = aes(x = End_of_Week, y = positiveIncreaseRate, color=admin_per_100k)) + 
+  geom_point() +
+  geom_jitter() + 
+  stat_smooth() + 
+  facet_wrap(~ name, scales = "free_x") +
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ggtitle("Time trend of PIR for 6 states selected by number of doses administered per 100k")
+```
+
+We can see that Georgia, Kansas and Mississippi are the three states that have the min number of doses administered per 100,000 census population while North Dakota, South Dakota and West Virginia are the three states that have the maximum value. The PIR decreases from January to March for all states in general. But the fluctuation of the trend is not similar in each state. And for the states with better vaccinated status, the PIR is under 10% most of the time and the max PIR is around 20%. However, for the states with worse vaccinated status, the PIR is always larger than 10% and is high up to 30%.
+
+We draw a statistical summary graph of PIR by states to better investigate the PIR value of each state.
+
+```{r, echo=FALSE}
+ggplot(data = admin_max_min_3_data) +
+  stat_summary(mapping = aes(x = name, y = positiveIncreaseRate), fun.min = min, fun.max=max, fun=median) +
+  ggtitle("Statistical summary graphs of PIR by state")
+```
+
+From the graph, the mean PIR of the three states with better vaccination status is significantly less than the mean PIR of the other three states.
+
+To see if there is a statistically significant difference, we can perform a two-sample t-test on the PIR records of state Georgia and North Dakota.
+
+```{r, echo=FALSE}
+library(broom)
+t.test(admin_max_min_3_data[state=="GA"]$positiveIncreaseRate, admin_max_min_3_data[state=="ND"]$positiveIncreaseRate) %>%
+  tidy() %>%
+  subset(select=c("method", "estimate", "statistic", "p.value", "conf.low", "conf.high")) %>%
+  kable(caption="Two sample t-test between PIR of state Kansas and South Dakota")
+```
+
+The results above show a p-value = 0.0005119 < .01 supporting the alternative hypothesis that “true difference in means is not equal to 0”; essentially it states there is a statistical difference between the PIR in two states. Therefore, the PIR is significantly different from Kansas and South Dakota, indicating that the vaccinated status may influence COVID-19 cases.
+
+Besides the trend, we are also interested in the mean PIR by each state and its association with vaccination. Therefore, we calculated the mean PIR and created two summary statistic tables showing the average PIR by state, one contains 10 states that have the min PIR and the other contains 10 states with the max PIR.
+
+```{r, echo=FALSE}
+
+
+tab <- merged_data[, .(
+  mean_positiveIncreaseRate = mean(positiveIncreaseRate),
+  admin_per_100k = unique(admin_per_100k),
+  lat = unique(latitude),
+  lon = unique(longitude),
+  name = unique(name)
+), by = state]
+
+tab <- tab[order(mean_positiveIncreaseRate)]
+
+tab_top10 <- head(tab, n = 7)
+
+tab_tail10 <- tail(tab, n = 7)
+
+knitr::kable(tab_top10[, .(state, name, mean_positiveIncreaseRate, admin_per_100k)], caption = "A summary table categorized by state, containing 10 states that has the minimum mean positive increase rate")
+
+knitr::kable(tab_tail10[, .(state, name, mean_positiveIncreaseRate, admin_per_100k)], caption = "A summary table categorized by state, containing 10 states that has the maximum mean positive increase rate")
+```
+
+
+For the upper summary table where states have a higher mean PIR, the number of doses administered per 100,000 census population is also larger in general compared to the other table. The `admin_per_100k` in the upper table are all above 1000 and high up to 2496, while in the lower table, the `admin_per_100k` are mostly under 1000.
+
+We then drew a map of the united states to see the mean PIR and number of vaccination.
+
+```{r, echo=FALSE}
+library(leaflet)
+
+vacc_pal <- colorNumeric(c('blue', 'purple', 'red'), domain=tab$admin_per_100k, na.color=NA)
+
+addLegendCustom <- function(map, colors, labels, sizes, opacity = 0.5, title){
+  colorAdditions <- paste0(colors, "; border-radius: 50%; width:", sizes, "px; height:", sizes, "px")
+  labelAdditions <- paste0("<div style='display: inline-block;height: ", 
+                           sizes, "px;margin-top: 4px;line-height: ", sizes, "px;'>", 
+                           labels, "</div>")
+
+  return(addLegend(map, colors = colorAdditions, labels = labelAdditions, opacity = opacity, title=title))
+}
+
+tab %>%
+  leaflet() %>%
+  addProviderTiles('OpenStreetMap') %>%
+  addCircles(lat=~lat, lng=~lon, color=~vacc_pal(admin_per_100k), label=~paste(name, admin_per_100k), opacity = 1, fillOpacity = 1, radius = ~mean_positiveIncreaseRate*500000) %>%
+  addLegend('bottomleft', pal = vacc_pal, values = merged_data$admin_per_100k, title="doses administered per 100k", opacity = 1) %>%
+  addLegendCustom(colors = "red", labels = c("5%", "10%", "20%", "30%"), sizes = c(0.05*100, 0.1*100, 0.2*100, 0.3*100), title="positive increase rate")
+```
+
+
+The colour shows the number of doses per 100k. Colour closer to blue means less number of doses while closer to red means a larger number of doses. The size of the circles represents the mean PIR: a larger size indicates a larger PIR. We can see that most blue circles have a large radius, and as colour become closer to red, the radius tends to decrease. This map also tells us that, for states with a worse vaccinated status, the PIR in those states tend to be high.
+
+To further investigate the association between vaccination and PIR, I draw a linear regression plot between these two variables.
+
+
+```{r, echo=FALSE, message=FALSE}
+ggplot(data=tab, mapping = aes(x = admin_per_100k, y = mean_positiveIncreaseRate)) + 
+  geom_point() +
+  geom_jitter() + 
+  stat_smooth(method = lm) + 
+  ggtitle("Linear regression between vaccination and PIR")
+```
+
+The plot suggests that as the number of doses administered per 100,000 census population increases, the mean PIR decreases. There seems a negative linear regression between these two variables.
+
+We can fit a linear regression model to examine whether the regression between these two variables is statistically significant.
+
+```{r, echo=FALSE}
+library(broom)
+lm(mean_positiveIncreaseRate ~ admin_per_100k, data = tab) %>%
+  tidy() %>%
+  kable(caption="Linear regression model between admin_per_100k and mean PIR")
+```
+
+From the summary of the model, it can be seen that the p-value of the variable `admin_per_100k` is 0.026 < 0.05, which is highly significant. This means that it's 95% statistically significant that the number of vaccination is related to the PIR. 
+
+The `admin_per_100k` coefficient suggests that for every 100 unit increase, holding all other predictors constant, we can expect a decrease of 0.3% in PIR, on average.
+
+Finally, the linear model equation can be written as follow: $PIR = 0.15266 - 0.00003*admin\_per\_100k$.
+
+# Conclusion
+
+The mean PIR(positive increase rate: percentage of daily PCR test results that are positive) and the trend of PIR differ from state to state, and it's highly significant that the difference is related to vaccination. As we use PIR to reflect the severity of COVID-19 for each state, we can conclude that, for states with better vaccination status, the COVID-19 is less severe while for states with worse vaccination status, the pandemic is more severe.

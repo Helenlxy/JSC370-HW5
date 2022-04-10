@@ -1,0 +1,26 @@
+{
+    "id": "1DA543A6",
+    "path": "C:/Users/AIPC/Desktop/Courses/JSC370/hw5/process_COVID_data.R",
+    "project_path": "process_COVID_data.R",
+    "type": "r_source",
+    "hash": "806259992",
+    "contents": "",
+    "dirty": false,
+    "created": 1649542684025.0,
+    "source_on_save": false,
+    "relative_order": 6,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "79,32",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1649543961,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1649543961127,
+    "read_only": false,
+    "read_only_alternatives": []
+}

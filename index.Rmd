@@ -1,0 +1,32 @@
+---
+title: "JSC370 Homework 5"
+author: "Xinyi Liu"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+
+This is the home page of my JSC370 Homework 5 website. 😀🥰🤩🥳
+
+Please use the investigation bar above to access 3 interactive visualizations.
+
+The website of the final project is launched at https://helenlxy.github.io/JSC370/.
+
+# Data
+
+## COVID-19 Data
+
+[The COVID tracking project](https://covidtracking.com/) collected state-level metrics for COVID-19 cases, tests, hospitalizations, and outcomes from 2020/01/13 to 2021/03/07. There are 20780 state-level COVID-19 observations of 56 variables, including the number of positive cases, tests, deaths and individuals who are currently hospitalized with COVID-19 etc. 
+
+We focused on the `positiveIncrease` and `totalTestResultsIncrease` variable, which is the daily increase of confirmed cases and PCR tests calculated based on the previous day’s value. Following the suggestions in [this article](https://covidtracking.com/analysis-updates/how-day-of-week-effects-impact-covid-19-data), we used the 7-day average to show the general trends of data over a period of time due to the complexities of state reporting schedules and day-of-week effects. 
+
+To ensure the collected data is accurate and stabilized, we only analysed records in 2021 as the data collection at the beginning of the pandemic may contain many errors.
+
+## Vaccination Data
+
+Besides COVID-19 cases data, we also want to see if the difference between states is associated with vaccination. Therefore, we used the state-level COVID-19 Vaccinations data in the United States from [Centers for Disease Contol and Prevention](https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc). CDC also provides data API so that we can acquire vaccination data on 2021-01-03 which is the beginning date in our COVID-19 data records. We focused on the `Admin_Per_100K` variable which is the total number of doses administered per 100,000 census population based on the jurisdiction where the recipient lives.
+
+## State Data
+
+It's noticeable that there are 65 locations in the vaccination data while there are only 48 contiguous united states. This is because the `location` variable from CDC contains state, territory and federal entities. To keep only the contiguous united states, we used a [state dataset](https://developers.google.com/public-data/docs/canonical/states_csv) that is used in Google DSPL and [us_census_data](https://github.com/COVID19Tracking/associated-data/tree/master/us_census_data) to access the population and population density of each state.

@@ -1,0 +1,148 @@
+---
+title: "Assignment 05 -  Interactive Visualization I and II"
+author: "Xinyi Liu"
+date: "`r date()`"
+output:
+  #pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Data
+
+For this assignment, we used COVID-19 data from [the COVID tracking project](https://covidtracking.com/). The COVID tracking project collected state-level metrics for COVID-19 cases, tests, hospitalizations, and outcomes from 2020/01/13 to 2021/03/07. Besides COVID-19 cases data, we also want to see if the difference between states is associated with vaccination. Therefore, we used the state-level COVID-19 Vaccinations data in the United States from [Centers for Disease Contol and Prevention](https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc) To keep only the contiguous united states, we used a [dataset](https://developers.google.com/public-data/docs/canonical/states_csv) that is used in Google DSPL. It also has the latitude and longitude of states which helps us draw maps in the following analysis.
+
+```{r, echo=FALSE, message=FALSE}
+library(data.table)
+library(dtplyr)
+library(dplyr)
+library(ggplot2)
+#library(mgcv)
+library(knitr)
+#library(magrittr)
+library(lubridate)
+library(tidyverse)
+library(plotly)
+library(widgetframe)
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache=FALSE,
+  include=TRUE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px")
+```
+```{r, echo=FALSE}
+covid_data <- data.table::fread("https://api.covidtracking.com/v1/states/daily.csv")
+covid_data <- covid_data %>%
+  subset(date >= 20210103 & date <= 20210306) #Choose these two dates as they are the beginning and the end of two weeks
+covid_data <- covid_data[, .(positiveIncrease, totalTestResultsIncrease, date, state)]
+# Coerce to Date class
+covid_data[, Date := as.Date(x=as.character(date), format='%Y%m%d',origin = lubridate::origin)]
+
+# Extract day of the week (Saturday = 6)
+covid_data[, Week_Day := as.numeric(format(covid_data$Date, format='%w'))]
+
+# Adjust end-of-week date (first saturday from the original Date)
+covid_data[, End_of_Week := covid_data$Date + (6 - covid_data$Week_Day)]
+
+# Aggregate over week and climate division
+covid_data <- covid_data[, .(positiveIncrease = mean(positiveIncrease),
+                       totalTestResultsIncrease = mean(totalTestResultsIncrease)),
+                   by = .(state, End_of_Week)]
+
+covid_data[, positiveIncreaseRate := ifelse(!totalTestResultsIncrease, 0, positiveIncrease / totalTestResultsIncrease)]
+```
+```{r, echo=FALSE}
+vacc_data <- data.table::fread("https://data.cdc.gov/resource/unsk-b7fc.csv?date=2021-01-03T00:00:00.000")
+vacc_data <- vacc_data[, .(location, admin_per_100k)]
+#knitr::kable(summary(vacc_data), caption = "A summary table for vaccination data")
+```
+```{r, echo=FALSE}
+library(rvest)
+doc <- read_html("https://developers.google.com/public-data/docs/canonical/states_csv")
+states <- doc %>% html_table(fill=TRUE)
+states <- states[[1]]
+
+non_continuous <- c("AK", "HI", "PR", "DC")
+
+states <- subset(states, !(state %in% non_continuous))
+
+# data.frame(variable = names(states),
+#            type = sapply(states, typeof),
+#            first_values = sapply(states, function(x) paste0(head(x),  collapse = ", ")),
+#            row.names = NULL) %>% 
+#   kable(caption = "A variable table for the state dataset")
+```
+```{r, echo=FALSE}
+
+merged_data <- merge(covid_data, vacc_data, by.x="state", by.y = "location")
+merged_data <- merge(merged_data, states, by="state")
+
+#knitr::kable(summary(merged_data), caption = "A summary table for merged dataset")
+
+```
+
+## Interactive Visualization
+
+```{r}
+
+p1 <- ggplot(merged_data, aes(x=End_of_Week, y=positiveIncrease, colour = name)) +
+  geom_line()
+
+ggplotly(p1)%>%
+  layout(title = "positive case increase trend",
+         yaxis = list(title = "positive increase"),
+         xaxis = list(title = "date"),
+         hovermode = "compare")
+```
+```{r, echo=FALSE}
+
+
+tab <- merged_data[, .(
+  mean_positiveIncreaseRate = mean(positiveIncreaseRate),
+  mean_positiveIncrease = mean(positiveIncrease),
+  mean_totalTestResultsIncrease = mean(totalTestResultsIncrease),
+  admin_per_100k = unique(admin_per_100k),
+  lat = unique(latitude),
+  lon = unique(longitude),
+  name = unique(name)
+), by = state]
+
+tab <- tab[order(mean_positiveIncreaseRate)]
+```
+
+```{r}
+tab %>%
+  #filter(name != "California") %>%
+  plot_ly(x = ~admin_per_100k, y=~mean_positiveIncreaseRate, 
+          type = 'scatter', mode = 'markers', color = ~name, 
+          size=~mean_totalTestResultsIncrease, sizes = c(5, 70), 
+          marker = list(sizemode="diameter", opacity=0.5))%>%
+  layout(title = "Relationship between vaccine and positive increase rate",
+         yaxis = list(title = "positiveIncreaseRate"),
+         xaxis = list(title = "the number of doses administered per 100k"),
+         hovermode = "compare")
+```
+
+```{r}
+
+cv_states_mat <- merged_data %>%
+  select(name, End_of_Week, positiveIncreaseRate)
+
+cv_states_mat2 <- as.data.frame(pivot_wider(cv_states_mat, names_from = name, values_from = positiveIncreaseRate))
+
+cv_states_mat2 <- cv_states_mat2 %>%
+  column_to_rownames("End_of_Week") %>%
+  as.matrix()
+
+plot_ly(x=colnames(cv_states_mat2), y=rownames(cv_states_mat2), z=~cv_states_mat2, type="heatmap")
+  
+```

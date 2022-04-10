@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xinyi Liu" />
+
+
+<title>The trend of daily increase of confirmed cases</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">JSC370 Homework 5</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chart-bar"></span>
+     
+    Interactive Visualizations
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="vis1.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 1
+      </a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="vis2.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 2
+      </a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="vis3.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 3
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JSC370/jsc370-2022/">
+    <span class="fa fa-github fa-lg"></span>
+     
+    JSC370
+  </a>
+</li>
+<li>
+  <a href="https://github.com/Helenlxy/JSC370-HW5/">
+    <span class="fa fa-github fa-lg"></span>
+     
+    Homework 5
+  </a>
+</li>
+<li>
+  <a href="https://jsc370.github.io/jsc370-2022/">JSC370 Home</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">The trend of daily increase of confirmed cases</h1>
+<h4 class="author">Xinyi Liu</h4>
+
+</div>
+
+
+<p>This page shows the first interactive visualization: the trend of daily increase of confirmed cases in each state in the U.S.</p>
+<div id="process-covid-data" class="section level1">
+<h1>Process COVID data</h1>
+<p>We mainly used 3 variables in this plot: <code>positiveIncrease</code> from the COVID tracking project which is the daily increase of confirmed cases as well as the date and state of each <code>positiveIncrease</code> record.</p>
+</div>
+<div id="display" class="section level1">
+<h1>Display</h1>
+<div id="htmlwidget-ff19999f9fac6d41d94d" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ff19999f9fac6d41d94d">{"x":{"data":[{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[4241.71428571429,3075.85714285714,2680.14285714286,2305.71428571429,2247,1220.71428571429,875.714285714286,956.714285714286,961.142857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  4241.71429<br />name: Alabama","End_of_Week: 2021-01-16<br />positiveIncrease:  3075.85714<br />name: Alabama","End_of_Week: 2021-01-23<br />positiveIncrease:  2680.14286<br />name: Alabama","End_of_Week: 2021-01-30<br />positiveIncrease:  2305.71429<br />name: Alabama","End_of_Week: 2021-02-06<br />positiveIncrease:  2247.00000<br />name: Alabama","End_of_Week: 2021-02-13<br />positiveIncrease:  1220.71429<br />name: Alabama","End_of_Week: 2021-02-20<br />positiveIncrease:   875.71429<br />name: Alabama","End_of_Week: 2021-02-27<br />positiveIncrease:   956.71429<br />name: Alabama","End_of_Week: 2021-03-06<br />positiveIncrease:   961.14286<br />name: Alabama"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)","dash":"solid"},"hoveron":"points","name":"Alabama","legendgroup":"Alabama","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[9742.14285714286,8508,6922.28571428571,5431.71428571429,3673.42857142857,2318.57142857143,1548.57142857143,1363.42857142857,1344.57142857143],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  9742.14286<br />name: Arizona","End_of_Week: 2021-01-16<br />positiveIncrease:  8508.00000<br />name: Arizona","End_of_Week: 2021-01-23<br />positiveIncrease:  6922.28571<br />name: Arizona","End_of_Week: 2021-01-30<br />positiveIncrease:  5431.71429<br />name: Arizona","End_of_Week: 2021-02-06<br />positiveIncrease:  3673.42857<br />name: Arizona","End_of_Week: 2021-02-13<br />positiveIncrease:  2318.57143<br />name: Arizona","End_of_Week: 2021-02-20<br />positiveIncrease:  1548.57143<br />name: Arizona","End_of_Week: 2021-02-27<br />positiveIncrease:  1363.42857<br />name: Arizona","End_of_Week: 2021-03-06<br />positiveIncrease:  1344.57143<br />name: Arizona"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(243,124,88,1)","dash":"solid"},"hoveron":"points","name":"Arizona","legendgroup":"Arizona","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2900.57142857143,2633.14285714286,1831,1627.42857142857,1668.14285714286,928.285714285714,381.142857142857,566.428571428571,779.714285714286],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2900.57143<br />name: Arkansas","End_of_Week: 2021-01-16<br />positiveIncrease:  2633.14286<br />name: Arkansas","End_of_Week: 2021-01-23<br />positiveIncrease:  1831.00000<br />name: Arkansas","End_of_Week: 2021-01-30<br />positiveIncrease:  1627.42857<br />name: Arkansas","End_of_Week: 2021-02-06<br />positiveIncrease:  1668.14286<br />name: Arkansas","End_of_Week: 2021-02-13<br />positiveIncrease:   928.28571<br />name: Arkansas","End_of_Week: 2021-02-20<br />positiveIncrease:   381.14286<br />name: Arkansas","End_of_Week: 2021-02-27<br />positiveIncrease:   566.42857<br />name: Arkansas","End_of_Week: 2021-03-06<br />positiveIncrease:   779.71429<br />name: Arkansas"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(237,129,62,1)","dash":"solid"},"hoveron":"points","name":"Arkansas","legendgroup":"Arkansas","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[39338.2857142857,39852.7142857143,26399.1428571429,19904.8571428571,13784,10024.8571428571,6307.14285714286,5098.71428571429,3814.42857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease: 39338.28571<br />name: California","End_of_Week: 2021-01-16<br />positiveIncrease: 39852.71429<br />name: California","End_of_Week: 2021-01-23<br />positiveIncrease: 26399.14286<br />name: California","End_of_Week: 2021-01-30<br />positiveIncrease: 19904.85714<br />name: California","End_of_Week: 2021-02-06<br />positiveIncrease: 13784.00000<br />name: California","End_of_Week: 2021-02-13<br />positiveIncrease: 10024.85714<br />name: California","End_of_Week: 2021-02-20<br />positiveIncrease:  6307.14286<br />name: California","End_of_Week: 2021-02-27<br />positiveIncrease:  5098.71429<br />name: California","End_of_Week: 2021-03-06<br />positiveIncrease:  3814.42857<br />name: California"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(230,134,19,1)","dash":"solid"},"hoveron":"points","name":"California","legendgroup":"California","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2825,2076.57142857143,1640.42857142857,1435.71428571429,1319.85714285714,1246.85714285714,975.571428571429,1092.85714285714,1185.71428571429],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2825.00000<br />name: Colorado","End_of_Week: 2021-01-16<br />positiveIncrease:  2076.57143<br />name: Colorado","End_of_Week: 2021-01-23<br />positiveIncrease:  1640.42857<br />name: Colorado","End_of_Week: 2021-01-30<br />positiveIncrease:  1435.71429<br />name: Colorado","End_of_Week: 2021-02-06<br />positiveIncrease:  1319.85714<br />name: Colorado","End_of_Week: 2021-02-13<br />positiveIncrease:  1246.85714<br />name: Colorado","End_of_Week: 2021-02-20<br />positiveIncrease:   975.57143<br />name: Colorado","End_of_Week: 2021-02-27<br />positiveIncrease:  1092.85714<br />name: Colorado","End_of_Week: 2021-03-06<br />positiveIncrease:  1185.71429<br />name: Colorado"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(222,140,0,1)","dash":"solid"},"hoveron":"points","name":"Colorado","legendgroup":"Colorado","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2267.71428571429,2489.71428571429,2056.14285714286,1744,1335.57142857143,1137.85714285714,823.428571428571,977.857142857143,769.142857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2267.71429<br />name: Connecticut","End_of_Week: 2021-01-16<br />positiveIncrease:  2489.71429<br />name: Connecticut","End_of_Week: 2021-01-23<br />positiveIncrease:  2056.14286<br />name: Connecticut","End_of_Week: 2021-01-30<br />positiveIncrease:  1744.00000<br />name: Connecticut","End_of_Week: 2021-02-06<br />positiveIncrease:  1335.57143<br />name: Connecticut","End_of_Week: 2021-02-13<br />positiveIncrease:  1137.85714<br />name: Connecticut","End_of_Week: 2021-02-20<br />positiveIncrease:   823.42857<br />name: Connecticut","End_of_Week: 2021-02-27<br />positiveIncrease:   977.85714<br />name: Connecticut","End_of_Week: 2021-03-06<br />positiveIncrease:   769.14286<br />name: Connecticut"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(214,145,0,1)","dash":"solid"},"hoveron":"points","name":"Connecticut","legendgroup":"Connecticut","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[800.285714285714,699.571428571429,649,519.428571428571,325.857142857143,405.714285714286,265.571428571429,283.714285714286,231.714285714286],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   800.28571<br />name: Delaware","End_of_Week: 2021-01-16<br />positiveIncrease:   699.57143<br />name: Delaware","End_of_Week: 2021-01-23<br />positiveIncrease:   649.00000<br />name: Delaware","End_of_Week: 2021-01-30<br />positiveIncrease:   519.42857<br />name: Delaware","End_of_Week: 2021-02-06<br />positiveIncrease:   325.85714<br />name: Delaware","End_of_Week: 2021-02-13<br />positiveIncrease:   405.71429<br />name: Delaware","End_of_Week: 2021-02-20<br />positiveIncrease:   265.57143<br />name: Delaware","End_of_Week: 2021-02-27<br />positiveIncrease:   283.71429<br />name: Delaware","End_of_Week: 2021-03-06<br />positiveIncrease:   231.71429<br />name: Delaware"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(205,150,0,1)","dash":"solid"},"hoveron":"points","name":"Delaware","legendgroup":"Delaware","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[15360,13321.5714285714,11160.4285714286,10306.1428571429,8168.57142857143,7078.71428571429,5849.42857142857,5570.85714285714,5202.28571428571],"text":["End_of_Week: 2021-01-09<br />positiveIncrease: 15360.00000<br />name: Florida","End_of_Week: 2021-01-16<br />positiveIncrease: 13321.57143<br />name: Florida","End_of_Week: 2021-01-23<br />positiveIncrease: 11160.42857<br />name: Florida","End_of_Week: 2021-01-30<br />positiveIncrease: 10306.14286<br />name: Florida","End_of_Week: 2021-02-06<br />positiveIncrease:  8168.57143<br />name: Florida","End_of_Week: 2021-02-13<br />positiveIncrease:  7078.71429<br />name: Florida","End_of_Week: 2021-02-20<br />positiveIncrease:  5849.42857<br />name: Florida","End_of_Week: 2021-02-27<br />positiveIncrease:  5570.85714<br />name: Florida","End_of_Week: 2021-03-06<br />positiveIncrease:  5202.28571<br />name: Florida"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(194,154,0,1)","dash":"solid"},"hoveron":"points","name":"Florida","legendgroup":"Florida","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[9104.28571428571,8687.28571428571,7499.28571428571,6242.85714285714,4506.28571428571,3629.42857142857,2991.28571428571,2920,2513],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  9104.28571<br />name: Georgia","End_of_Week: 2021-01-16<br />positiveIncrease:  8687.28571<br />name: Georgia","End_of_Week: 2021-01-23<br />positiveIncrease:  7499.28571<br />name: Georgia","End_of_Week: 2021-01-30<br />positiveIncrease:  6242.85714<br />name: Georgia","End_of_Week: 2021-02-06<br />positiveIncrease:  4506.28571<br />name: Georgia","End_of_Week: 2021-02-13<br />positiveIncrease:  3629.42857<br />name: Georgia","End_of_Week: 2021-02-20<br />positiveIncrease:  2991.28571<br />name: Georgia","End_of_Week: 2021-02-27<br />positiveIncrease:  2920.00000<br />name: Georgia","End_of_Week: 2021-03-06<br />positiveIncrease:  2513.00000<br />name: Georgia"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(183,159,0,1)","dash":"solid"},"hoveron":"points","name":"Georgia","legendgroup":"Georgia","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[1025.85714285714,887.428571428571,618.285714285714,508.142857142857,373.428571428571,322.285714285714,246.857142857143,279.142857142857,274.285714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  1025.85714<br />name: Idaho","End_of_Week: 2021-01-16<br />positiveIncrease:   887.42857<br />name: Idaho","End_of_Week: 2021-01-23<br />positiveIncrease:   618.28571<br />name: Idaho","End_of_Week: 2021-01-30<br />positiveIncrease:   508.14286<br />name: Idaho","End_of_Week: 2021-02-06<br />positiveIncrease:   373.42857<br />name: Idaho","End_of_Week: 2021-02-13<br />positiveIncrease:   322.28571<br />name: Idaho","End_of_Week: 2021-02-20<br />positiveIncrease:   246.85714<br />name: Idaho","End_of_Week: 2021-02-27<br />positiveIncrease:   279.14286<br />name: Idaho","End_of_Week: 2021-03-06<br />positiveIncrease:   274.28571<br />name: Idaho"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(171,163,0,1)","dash":"solid"},"hoveron":"points","name":"Idaho","legendgroup":"Idaho","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[6955.28571428571,5804,4837.14285714286,3620.85714285714,2915.42857142857,2320.28571428571,1757.28571428571,1803.28571428571,1688.57142857143],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  6955.28571<br />name: Illinois","End_of_Week: 2021-01-16<br />positiveIncrease:  5804.00000<br />name: Illinois","End_of_Week: 2021-01-23<br />positiveIncrease:  4837.14286<br />name: Illinois","End_of_Week: 2021-01-30<br />positiveIncrease:  3620.85714<br />name: Illinois","End_of_Week: 2021-02-06<br />positiveIncrease:  2915.42857<br />name: Illinois","End_of_Week: 2021-02-13<br />positiveIncrease:  2320.28571<br />name: Illinois","End_of_Week: 2021-02-20<br />positiveIncrease:  1757.28571<br />name: Illinois","End_of_Week: 2021-02-27<br />positiveIncrease:  1803.28571<br />name: Illinois","End_of_Week: 2021-03-06<br />positiveIncrease:  1688.57143<br />name: Illinois"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(157,167,0,1)","dash":"solid"},"hoveron":"points","name":"Illinois","legendgroup":"Illinois","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[5067.14285714286,4069.85714285714,3067.14285714286,2348.57142857143,1861.14285714286,1381.42857142857,1000.42857142857,897.428571428571,796.285714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  5067.14286<br />name: Indiana","End_of_Week: 2021-01-16<br />positiveIncrease:  4069.85714<br />name: Indiana","End_of_Week: 2021-01-23<br />positiveIncrease:  3067.14286<br />name: Indiana","End_of_Week: 2021-01-30<br />positiveIncrease:  2348.57143<br />name: Indiana","End_of_Week: 2021-02-06<br />positiveIncrease:  1861.14286<br />name: Indiana","End_of_Week: 2021-02-13<br />positiveIncrease:  1381.42857<br />name: Indiana","End_of_Week: 2021-02-20<br />positiveIncrease:  1000.42857<br />name: Indiana","End_of_Week: 2021-02-27<br />positiveIncrease:   897.42857<br />name: Indiana","End_of_Week: 2021-03-06<br />positiveIncrease:   796.28571<br />name: Indiana"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(142,171,0,1)","dash":"solid"},"hoveron":"points","name":"Indiana","legendgroup":"Indiana","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[1224.42857142857,941.428571428571,820.857142857143,683.571428571429,571.571428571429,493,368.571428571429,396.857142857143,340.428571428571],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  1224.42857<br />name: Iowa","End_of_Week: 2021-01-16<br />positiveIncrease:   941.42857<br />name: Iowa","End_of_Week: 2021-01-23<br />positiveIncrease:   820.85714<br />name: Iowa","End_of_Week: 2021-01-30<br />positiveIncrease:   683.57143<br />name: Iowa","End_of_Week: 2021-02-06<br />positiveIncrease:   571.57143<br />name: Iowa","End_of_Week: 2021-02-13<br />positiveIncrease:   493.00000<br />name: Iowa","End_of_Week: 2021-02-20<br />positiveIncrease:   368.57143<br />name: Iowa","End_of_Week: 2021-02-27<br />positiveIncrease:   396.85714<br />name: Iowa","End_of_Week: 2021-03-06<br />positiveIncrease:   340.42857<br />name: Iowa"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(124,174,0,1)","dash":"solid"},"hoveron":"points","name":"Iowa","legendgroup":"Iowa","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2082.42857142857,1973.14285714286,1502.71428571429,1147.42857142857,982.428571428571,648.571428571429,675.714285714286,404.428571428571,314],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2082.42857<br />name: Kansas","End_of_Week: 2021-01-16<br />positiveIncrease:  1973.14286<br />name: Kansas","End_of_Week: 2021-01-23<br />positiveIncrease:  1502.71429<br />name: Kansas","End_of_Week: 2021-01-30<br />positiveIncrease:  1147.42857<br />name: Kansas","End_of_Week: 2021-02-06<br />positiveIncrease:   982.42857<br />name: Kansas","End_of_Week: 2021-02-13<br />positiveIncrease:   648.57143<br />name: Kansas","End_of_Week: 2021-02-20<br />positiveIncrease:   675.71429<br />name: Kansas","End_of_Week: 2021-02-27<br />positiveIncrease:   404.42857<br />name: Kansas","End_of_Week: 2021-03-06<br />positiveIncrease:   314.00000<br />name: Kansas"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(102,178,0,1)","dash":"solid"},"hoveron":"points","name":"Kansas","legendgroup":"Kansas","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[3775.28571428571,3418.14285714286,2891.85714285714,2365.14285714286,2162.57142857143,1546.85714285714,1275.42857142857,1132.71428571429,891],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  3775.28571<br />name: Kentucky","End_of_Week: 2021-01-16<br />positiveIncrease:  3418.14286<br />name: Kentucky","End_of_Week: 2021-01-23<br />positiveIncrease:  2891.85714<br />name: Kentucky","End_of_Week: 2021-01-30<br />positiveIncrease:  2365.14286<br />name: Kentucky","End_of_Week: 2021-02-06<br />positiveIncrease:  2162.57143<br />name: Kentucky","End_of_Week: 2021-02-13<br />positiveIncrease:  1546.85714<br />name: Kentucky","End_of_Week: 2021-02-20<br />positiveIncrease:  1275.42857<br />name: Kentucky","End_of_Week: 2021-02-27<br />positiveIncrease:  1132.71429<br />name: Kentucky","End_of_Week: 2021-03-06<br />positiveIncrease:   891.00000<br />name: Kentucky"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(73,181,0,1)","dash":"solid"},"hoveron":"points","name":"Kentucky","legendgroup":"Kentucky","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[3736.57142857143,3346,2200.28571428571,2431.57142857143,1797.85714285714,1246.28571428571,528.857142857143,900.714285714286,636.142857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  3736.57143<br />name: Louisiana","End_of_Week: 2021-01-16<br />positiveIncrease:  3346.00000<br />name: Louisiana","End_of_Week: 2021-01-23<br />positiveIncrease:  2200.28571<br />name: Louisiana","End_of_Week: 2021-01-30<br />positiveIncrease:  2431.57143<br />name: Louisiana","End_of_Week: 2021-02-06<br />positiveIncrease:  1797.85714<br />name: Louisiana","End_of_Week: 2021-02-13<br />positiveIncrease:  1246.28571<br />name: Louisiana","End_of_Week: 2021-02-20<br />positiveIncrease:   528.85714<br />name: Louisiana","End_of_Week: 2021-02-27<br />positiveIncrease:   900.71429<br />name: Louisiana","End_of_Week: 2021-03-06<br />positiveIncrease:   636.14286<br />name: Louisiana"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(12,183,2,1)","dash":"solid"},"hoveron":"points","name":"Louisiana","legendgroup":"Louisiana","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[539.142857142857,600,482.714285714286,367.142857142857,270.857142857143,193.571428571429,135.428571428571,160.714285714286,163.285714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   539.14286<br />name: Maine","End_of_Week: 2021-01-16<br />positiveIncrease:   600.00000<br />name: Maine","End_of_Week: 2021-01-23<br />positiveIncrease:   482.71429<br />name: Maine","End_of_Week: 2021-01-30<br />positiveIncrease:   367.14286<br />name: Maine","End_of_Week: 2021-02-06<br />positiveIncrease:   270.85714<br />name: Maine","End_of_Week: 2021-02-13<br />positiveIncrease:   193.57143<br />name: Maine","End_of_Week: 2021-02-20<br />positiveIncrease:   135.42857<br />name: Maine","End_of_Week: 2021-02-27<br />positiveIncrease:   160.71429<br />name: Maine","End_of_Week: 2021-03-06<br />positiveIncrease:   163.28571<br />name: Maine"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,186,56,1)","dash":"solid"},"hoveron":"points","name":"Maine","legendgroup":"Maine","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2884.71428571429,2952.42857142857,2182.28571428571,1917,1336.85714285714,1150.28571428571,800.142857142857,790.714285714286,762.571428571429],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2884.71429<br />name: Maryland","End_of_Week: 2021-01-16<br />positiveIncrease:  2952.42857<br />name: Maryland","End_of_Week: 2021-01-23<br />positiveIncrease:  2182.28571<br />name: Maryland","End_of_Week: 2021-01-30<br />positiveIncrease:  1917.00000<br />name: Maryland","End_of_Week: 2021-02-06<br />positiveIncrease:  1336.85714<br />name: Maryland","End_of_Week: 2021-02-13<br />positiveIncrease:  1150.28571<br />name: Maryland","End_of_Week: 2021-02-20<br />positiveIncrease:   800.14286<br />name: Maryland","End_of_Week: 2021-02-27<br />positiveIncrease:   790.71429<br />name: Maryland","End_of_Week: 2021-03-06<br />positiveIncrease:   762.57143<br />name: Maryland"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,188,82,1)","dash":"solid"},"hoveron":"points","name":"Maryland","legendgroup":"Maryland","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[6136.28571428571,5513,4338.14285714286,3609.57142857143,2781,2152.57142857143,1695.57142857143,1702.28571428571,1464.42857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  6136.28571<br />name: Massachusetts","End_of_Week: 2021-01-16<br />positiveIncrease:  5513.00000<br />name: Massachusetts","End_of_Week: 2021-01-23<br />positiveIncrease:  4338.14286<br />name: Massachusetts","End_of_Week: 2021-01-30<br />positiveIncrease:  3609.57143<br />name: Massachusetts","End_of_Week: 2021-02-06<br />positiveIncrease:  2781.00000<br />name: Massachusetts","End_of_Week: 2021-02-13<br />positiveIncrease:  2152.57143<br />name: Massachusetts","End_of_Week: 2021-02-20<br />positiveIncrease:  1695.57143<br />name: Massachusetts","End_of_Week: 2021-02-27<br />positiveIncrease:  1702.28571<br />name: Massachusetts","End_of_Week: 2021-03-06<br />positiveIncrease:  1464.42857<br />name: Massachusetts"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,190,103,1)","dash":"solid"},"hoveron":"points","name":"Massachusetts","legendgroup":"Massachusetts","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[3490.28571428571,2747.42857142857,2137.28571428571,1913.14285714286,1506.71428571429,1181.57142857143,1044.71428571429,1325.85714285714,1503.14285714286],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  3490.28571<br />name: Michigan","End_of_Week: 2021-01-16<br />positiveIncrease:  2747.42857<br />name: Michigan","End_of_Week: 2021-01-23<br />positiveIncrease:  2137.28571<br />name: Michigan","End_of_Week: 2021-01-30<br />positiveIncrease:  1913.14286<br />name: Michigan","End_of_Week: 2021-02-06<br />positiveIncrease:  1506.71429<br />name: Michigan","End_of_Week: 2021-02-13<br />positiveIncrease:  1181.57143<br />name: Michigan","End_of_Week: 2021-02-20<br />positiveIncrease:  1044.71429<br />name: Michigan","End_of_Week: 2021-02-27<br />positiveIncrease:  1325.85714<br />name: Michigan","End_of_Week: 2021-03-06<br />positiveIncrease:  1503.14286<br />name: Michigan"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,191,122,1)","dash":"solid"},"hoveron":"points","name":"Michigan","legendgroup":"Michigan","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2368.71428571429,1519.14285714286,1251.57142857143,1001.57142857143,914,796.285714285714,766.571428571429,804.714285714286,760.857142857143],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2368.71429<br />name: Minnesota","End_of_Week: 2021-01-16<br />positiveIncrease:  1519.14286<br />name: Minnesota","End_of_Week: 2021-01-23<br />positiveIncrease:  1251.57143<br />name: Minnesota","End_of_Week: 2021-01-30<br />positiveIncrease:  1001.57143<br />name: Minnesota","End_of_Week: 2021-02-06<br />positiveIncrease:   914.00000<br />name: Minnesota","End_of_Week: 2021-02-13<br />positiveIncrease:   796.28571<br />name: Minnesota","End_of_Week: 2021-02-20<br />positiveIncrease:   766.57143<br />name: Minnesota","End_of_Week: 2021-02-27<br />positiveIncrease:   804.71429<br />name: Minnesota","End_of_Week: 2021-03-06<br />positiveIncrease:   760.85714<br />name: Minnesota"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,192,139,1)","dash":"solid"},"hoveron":"points","name":"Minnesota","legendgroup":"Minnesota","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2370.14285714286,2000.14285714286,1736.28571428571,1595.28571428571,941.142857142857,795,557,549.857142857143,461.428571428571],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2370.14286<br />name: Mississippi","End_of_Week: 2021-01-16<br />positiveIncrease:  2000.14286<br />name: Mississippi","End_of_Week: 2021-01-23<br />positiveIncrease:  1736.28571<br />name: Mississippi","End_of_Week: 2021-01-30<br />positiveIncrease:  1595.28571<br />name: Mississippi","End_of_Week: 2021-02-06<br />positiveIncrease:   941.14286<br />name: Mississippi","End_of_Week: 2021-02-13<br />positiveIncrease:   795.00000<br />name: Mississippi","End_of_Week: 2021-02-20<br />positiveIncrease:   557.00000<br />name: Mississippi","End_of_Week: 2021-02-27<br />positiveIncrease:   549.85714<br />name: Mississippi","End_of_Week: 2021-03-06<br />positiveIncrease:   461.42857<br />name: Mississippi"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,193,154,1)","dash":"solid"},"hoveron":"points","name":"Mississippi","legendgroup":"Mississippi","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[3018.14285714286,2230.85714285714,1599.85714285714,1483,1095.57142857143,757.714285714286,547.857142857143,480.428571428571,343.142857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  3018.14286<br />name: Missouri","End_of_Week: 2021-01-16<br />positiveIncrease:  2230.85714<br />name: Missouri","End_of_Week: 2021-01-23<br />positiveIncrease:  1599.85714<br />name: Missouri","End_of_Week: 2021-01-30<br />positiveIncrease:  1483.00000<br />name: Missouri","End_of_Week: 2021-02-06<br />positiveIncrease:  1095.57143<br />name: Missouri","End_of_Week: 2021-02-13<br />positiveIncrease:   757.71429<br />name: Missouri","End_of_Week: 2021-02-20<br />positiveIncrease:   547.85714<br />name: Missouri","End_of_Week: 2021-02-27<br />positiveIncrease:   480.42857<br />name: Missouri","End_of_Week: 2021-03-06<br />positiveIncrease:   343.14286<br />name: Missouri"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,193,169,1)","dash":"solid"},"hoveron":"points","name":"Missouri","legendgroup":"Missouri","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[594,422,336.285714285714,336,279.285714285714,225.714285714286,192,170.857142857143,143.571428571429],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   594.00000<br />name: Montana","End_of_Week: 2021-01-16<br />positiveIncrease:   422.00000<br />name: Montana","End_of_Week: 2021-01-23<br />positiveIncrease:   336.28571<br />name: Montana","End_of_Week: 2021-01-30<br />positiveIncrease:   336.00000<br />name: Montana","End_of_Week: 2021-02-06<br />positiveIncrease:   279.28571<br />name: Montana","End_of_Week: 2021-02-13<br />positiveIncrease:   225.71429<br />name: Montana","End_of_Week: 2021-02-20<br />positiveIncrease:   192.00000<br />name: Montana","End_of_Week: 2021-02-27<br />positiveIncrease:   170.85714<br />name: Montana","End_of_Week: 2021-03-06<br />positiveIncrease:   143.57143<br />name: Montana"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,192,183,1)","dash":"solid"},"hoveron":"points","name":"Montana","legendgroup":"Montana","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[985.428571428571,899.428571428571,763.571428571429,616.428571428571,407.285714285714,515.142857142857,246.285714285714,275.714285714286,281.714285714286],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   985.42857<br />name: Nebraska","End_of_Week: 2021-01-16<br />positiveIncrease:   899.42857<br />name: Nebraska","End_of_Week: 2021-01-23<br />positiveIncrease:   763.57143<br />name: Nebraska","End_of_Week: 2021-01-30<br />positiveIncrease:   616.42857<br />name: Nebraska","End_of_Week: 2021-02-06<br />positiveIncrease:   407.28571<br />name: Nebraska","End_of_Week: 2021-02-13<br />positiveIncrease:   515.14286<br />name: Nebraska","End_of_Week: 2021-02-20<br />positiveIncrease:   246.28571<br />name: Nebraska","End_of_Week: 2021-02-27<br />positiveIncrease:   275.71429<br />name: Nebraska","End_of_Week: 2021-03-06<br />positiveIncrease:   281.71429<br />name: Nebraska"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)","dash":"solid"},"hoveron":"points","name":"Nebraska","legendgroup":"Nebraska","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[2491.14285714286,1968.71428571429,1374.71428571429,1090.85714285714,863.142857142857,635,405,402.428571428571,281.714285714286],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  2491.14286<br />name: Nevada","End_of_Week: 2021-01-16<br />positiveIncrease:  1968.71429<br />name: Nevada","End_of_Week: 2021-01-23<br />positiveIncrease:  1374.71429<br />name: Nevada","End_of_Week: 2021-01-30<br />positiveIncrease:  1090.85714<br />name: Nevada","End_of_Week: 2021-02-06<br />positiveIncrease:   863.14286<br />name: Nevada","End_of_Week: 2021-02-13<br />positiveIncrease:   635.00000<br />name: Nevada","End_of_Week: 2021-02-20<br />positiveIncrease:   405.00000<br />name: Nevada","End_of_Week: 2021-02-27<br />positiveIncrease:   402.42857<br />name: Nevada","End_of_Week: 2021-03-06<br />positiveIncrease:   281.71429<br />name: Nevada"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,189,209,1)","dash":"solid"},"hoveron":"points","name":"Nevada","legendgroup":"Nevada","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[812.428571428571,724.857142857143,804.428571428571,540.857142857143,385.571428571429,349.142857142857,379.428571428571,286.428571428571,218.428571428571],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   812.42857<br />name: New Hampshire","End_of_Week: 2021-01-16<br />positiveIncrease:   724.85714<br />name: New Hampshire","End_of_Week: 2021-01-23<br />positiveIncrease:   804.42857<br />name: New Hampshire","End_of_Week: 2021-01-30<br />positiveIncrease:   540.85714<br />name: New Hampshire","End_of_Week: 2021-02-06<br />positiveIncrease:   385.57143<br />name: New Hampshire","End_of_Week: 2021-02-13<br />positiveIncrease:   349.14286<br />name: New Hampshire","End_of_Week: 2021-02-20<br />positiveIncrease:   379.42857<br />name: New Hampshire","End_of_Week: 2021-02-27<br />positiveIncrease:   286.42857<br />name: New Hampshire","End_of_Week: 2021-03-06<br />positiveIncrease:   218.42857<br />name: New Hampshire"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,187,220,1)","dash":"solid"},"hoveron":"points","name":"New Hampshire","legendgroup":"New Hampshire","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[5782.85714285714,6129.57142857143,5063.85714285714,5001,3613.14285714286,3712,2936.42857142857,3227.57142857143,3303.28571428571],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  5782.85714<br />name: New Jersey","End_of_Week: 2021-01-16<br />positiveIncrease:  6129.57143<br />name: New Jersey","End_of_Week: 2021-01-23<br />positiveIncrease:  5063.85714<br />name: New Jersey","End_of_Week: 2021-01-30<br />positiveIncrease:  5001.00000<br />name: New Jersey","End_of_Week: 2021-02-06<br />positiveIncrease:  3613.14286<br />name: New Jersey","End_of_Week: 2021-02-13<br />positiveIncrease:  3712.00000<br />name: New Jersey","End_of_Week: 2021-02-20<br />positiveIncrease:  2936.42857<br />name: New Jersey","End_of_Week: 2021-02-27<br />positiveIncrease:  3227.57143<br />name: New Jersey","End_of_Week: 2021-03-06<br />positiveIncrease:  3303.28571<br />name: New Jersey"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,184,231,1)","dash":"solid"},"hoveron":"points","name":"New Jersey","legendgroup":"New Jersey","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[1367.85714285714,1134.14285714286,812.285714285714,708.571428571429,525,439.285714285714,312.285714285714,344.714285714286,264.857142857143],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  1367.85714<br />name: New Mexico","End_of_Week: 2021-01-16<br />positiveIncrease:  1134.14286<br />name: New Mexico","End_of_Week: 2021-01-23<br />positiveIncrease:   812.28571<br />name: New Mexico","End_of_Week: 2021-01-30<br />positiveIncrease:   708.57143<br />name: New Mexico","End_of_Week: 2021-02-06<br />positiveIncrease:   525.00000<br />name: New Mexico","End_of_Week: 2021-02-13<br />positiveIncrease:   439.28571<br />name: New Mexico","End_of_Week: 2021-02-20<br />positiveIncrease:   312.28571<br />name: New Mexico","End_of_Week: 2021-02-27<br />positiveIncrease:   344.71429<br />name: New Mexico","End_of_Week: 2021-03-06<br />positiveIncrease:   264.85714<br />name: New Mexico"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,180,240,1)","dash":"solid"},"hoveron":"points","name":"New Mexico","legendgroup":"New Mexico","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[15043.1428571429,15494.4285714286,13531.2857142857,12228,8697.71428571429,8672.28571428571,7246,7241.42857142857,7359.28571428571],"text":["End_of_Week: 2021-01-09<br />positiveIncrease: 15043.14286<br />name: New York","End_of_Week: 2021-01-16<br />positiveIncrease: 15494.42857<br />name: New York","End_of_Week: 2021-01-23<br />positiveIncrease: 13531.28571<br />name: New York","End_of_Week: 2021-01-30<br />positiveIncrease: 12228.00000<br />name: New York","End_of_Week: 2021-02-06<br />positiveIncrease:  8697.71429<br />name: New York","End_of_Week: 2021-02-13<br />positiveIncrease:  8672.28571<br />name: New York","End_of_Week: 2021-02-20<br />positiveIncrease:  7246.00000<br />name: New York","End_of_Week: 2021-02-27<br />positiveIncrease:  7241.42857<br />name: New York","End_of_Week: 2021-03-06<br />positiveIncrease:  7359.28571<br />name: New York"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,175,248,1)","dash":"solid"},"hoveron":"points","name":"New York","legendgroup":"New York","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[7988.28571428571,7638.71428571429,6412.85714285714,5701.57142857143,5556.28571428571,3886.14285714286,3053.14285714286,2636,1946.85714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  7988.28571<br />name: North Carolina","End_of_Week: 2021-01-16<br />positiveIncrease:  7638.71429<br />name: North Carolina","End_of_Week: 2021-01-23<br />positiveIncrease:  6412.85714<br />name: North Carolina","End_of_Week: 2021-01-30<br />positiveIncrease:  5701.57143<br />name: North Carolina","End_of_Week: 2021-02-06<br />positiveIncrease:  5556.28571<br />name: North Carolina","End_of_Week: 2021-02-13<br />positiveIncrease:  3886.14286<br />name: North Carolina","End_of_Week: 2021-02-20<br />positiveIncrease:  3053.14286<br />name: North Carolina","End_of_Week: 2021-02-27<br />positiveIncrease:  2636.00000<br />name: North Carolina","End_of_Week: 2021-03-06<br />positiveIncrease:  1946.85714<br />name: North Carolina"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,169,255,1)","dash":"solid"},"hoveron":"points","name":"North Carolina","legendgroup":"North Carolina","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[238.142857142857,165.142857142857,143.714285714286,120.285714285714,77.7142857142857,63.5714285714286,96.7142857142857,78.8571428571429,82.4285714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   238.14286<br />name: North Dakota","End_of_Week: 2021-01-16<br />positiveIncrease:   165.14286<br />name: North Dakota","End_of_Week: 2021-01-23<br />positiveIncrease:   143.71429<br />name: North Dakota","End_of_Week: 2021-01-30<br />positiveIncrease:   120.28571<br />name: North Dakota","End_of_Week: 2021-02-06<br />positiveIncrease:    77.71429<br />name: North Dakota","End_of_Week: 2021-02-13<br />positiveIncrease:    63.57143<br />name: North Dakota","End_of_Week: 2021-02-20<br />positiveIncrease:    96.71429<br />name: North Dakota","End_of_Week: 2021-02-27<br />positiveIncrease:    78.85714<br />name: North Dakota","End_of_Week: 2021-03-06<br />positiveIncrease:    82.42857<br />name: North Dakota"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(34,163,255,1)","dash":"solid"},"hoveron":"points","name":"North Dakota","legendgroup":"North Dakota","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[8043.42857142857,7218.57142857143,5476.28571428571,4705.71428571429,3614,2780.28571428571,2109.28571428571,1978.28571428571,1654.57142857143],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  8043.42857<br />name: Ohio","End_of_Week: 2021-01-16<br />positiveIncrease:  7218.57143<br />name: Ohio","End_of_Week: 2021-01-23<br />positiveIncrease:  5476.28571<br />name: Ohio","End_of_Week: 2021-01-30<br />positiveIncrease:  4705.71429<br />name: Ohio","End_of_Week: 2021-02-06<br />positiveIncrease:  3614.00000<br />name: Ohio","End_of_Week: 2021-02-13<br />positiveIncrease:  2780.28571<br />name: Ohio","End_of_Week: 2021-02-20<br />positiveIncrease:  2109.28571<br />name: Ohio","End_of_Week: 2021-02-27<br />positiveIncrease:  1978.28571<br />name: Ohio","End_of_Week: 2021-03-06<br />positiveIncrease:  1654.57143<br />name: Ohio"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(97,156,255,1)","dash":"solid"},"hoveron":"points","name":"Ohio","legendgroup":"Ohio","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[4117.14285714286,3827.14285714286,2640.57142857143,2348.71428571429,2170,1499.42857142857,863.142857142857,783.428571428571,676.285714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  4117.14286<br />name: Oklahoma","End_of_Week: 2021-01-16<br />positiveIncrease:  3827.14286<br />name: Oklahoma","End_of_Week: 2021-01-23<br />positiveIncrease:  2640.57143<br />name: Oklahoma","End_of_Week: 2021-01-30<br />positiveIncrease:  2348.71429<br />name: Oklahoma","End_of_Week: 2021-02-06<br />positiveIncrease:  2170.00000<br />name: Oklahoma","End_of_Week: 2021-02-13<br />positiveIncrease:  1499.42857<br />name: Oklahoma","End_of_Week: 2021-02-20<br />positiveIncrease:   863.14286<br />name: Oklahoma","End_of_Week: 2021-02-27<br />positiveIncrease:   783.42857<br />name: Oklahoma","End_of_Week: 2021-03-06<br />positiveIncrease:   676.28571<br />name: Oklahoma"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(132,148,255,1)","dash":"solid"},"hoveron":"points","name":"Oklahoma","legendgroup":"Oklahoma","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[1072.57142857143,1201.57142857143,797.285714285714,698.571428571429,629.857142857143,491.142857142857,373.428571428571,384,286.571428571429],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  1072.57143<br />name: Oregon","End_of_Week: 2021-01-16<br />positiveIncrease:  1201.57143<br />name: Oregon","End_of_Week: 2021-01-23<br />positiveIncrease:   797.28571<br />name: Oregon","End_of_Week: 2021-01-30<br />positiveIncrease:   698.57143<br />name: Oregon","End_of_Week: 2021-02-06<br />positiveIncrease:   629.85714<br />name: Oregon","End_of_Week: 2021-02-13<br />positiveIncrease:   491.14286<br />name: Oregon","End_of_Week: 2021-02-20<br />positiveIncrease:   373.42857<br />name: Oregon","End_of_Week: 2021-02-27<br />positiveIncrease:   384.00000<br />name: Oregon","End_of_Week: 2021-03-06<br />positiveIncrease:   286.57143<br />name: Oregon"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(159,140,255,1)","dash":"solid"},"hoveron":"points","name":"Oregon","legendgroup":"Oregon","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[8002.57142857143,6923.85714285714,5454.28571428571,5611.71428571429,3766.42857142857,3820,2749.57142857143,2586.57142857143,2469.71428571429],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  8002.57143<br />name: Pennsylvania","End_of_Week: 2021-01-16<br />positiveIncrease:  6923.85714<br />name: Pennsylvania","End_of_Week: 2021-01-23<br />positiveIncrease:  5454.28571<br />name: Pennsylvania","End_of_Week: 2021-01-30<br />positiveIncrease:  5611.71429<br />name: Pennsylvania","End_of_Week: 2021-02-06<br />positiveIncrease:  3766.42857<br />name: Pennsylvania","End_of_Week: 2021-02-13<br />positiveIncrease:  3820.00000<br />name: Pennsylvania","End_of_Week: 2021-02-20<br />positiveIncrease:  2749.57143<br />name: Pennsylvania","End_of_Week: 2021-02-27<br />positiveIncrease:  2586.57143<br />name: Pennsylvania","End_of_Week: 2021-03-06<br />positiveIncrease:  2469.71429<br />name: Pennsylvania"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(181,132,255,1)","dash":"solid"},"hoveron":"points","name":"Pennsylvania","legendgroup":"Pennsylvania","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[1116.28571428571,924.428571428571,748.428571428571,632.428571428571,483.285714285714,391.857142857143,326.285714285714,363.571428571429,346.142857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  1116.28571<br />name: Rhode Island","End_of_Week: 2021-01-16<br />positiveIncrease:   924.42857<br />name: Rhode Island","End_of_Week: 2021-01-23<br />positiveIncrease:   748.42857<br />name: Rhode Island","End_of_Week: 2021-01-30<br />positiveIncrease:   632.42857<br />name: Rhode Island","End_of_Week: 2021-02-06<br />positiveIncrease:   483.28571<br />name: Rhode Island","End_of_Week: 2021-02-13<br />positiveIncrease:   391.85714<br />name: Rhode Island","End_of_Week: 2021-02-20<br />positiveIncrease:   326.28571<br />name: Rhode Island","End_of_Week: 2021-02-27<br />positiveIncrease:   363.57143<br />name: Rhode Island","End_of_Week: 2021-03-06<br />positiveIncrease:   346.14286<br />name: Rhode Island"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(199,124,255,1)","dash":"solid"},"hoveron":"points","name":"Rhode Island","legendgroup":"Rhode Island","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[5338,4619.71428571429,4481,3713.71428571429,3313.71428571429,2879.85714285714,2591,1970.71428571429,1340.71428571429],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  5338.00000<br />name: South Carolina","End_of_Week: 2021-01-16<br />positiveIncrease:  4619.71429<br />name: South Carolina","End_of_Week: 2021-01-23<br />positiveIncrease:  4481.00000<br />name: South Carolina","End_of_Week: 2021-01-30<br />positiveIncrease:  3713.71429<br />name: South Carolina","End_of_Week: 2021-02-06<br />positiveIncrease:  3313.71429<br />name: South Carolina","End_of_Week: 2021-02-13<br />positiveIncrease:  2879.85714<br />name: South Carolina","End_of_Week: 2021-02-20<br />positiveIncrease:  2591.00000<br />name: South Carolina","End_of_Week: 2021-02-27<br />positiveIncrease:  1970.71429<br />name: South Carolina","End_of_Week: 2021-03-06<br />positiveIncrease:  1340.71429<br />name: South Carolina"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(214,116,253,1)","dash":"solid"},"hoveron":"points","name":"South Carolina","legendgroup":"South Carolina","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[438.857142857143,339.571428571429,240.714285714286,158.142857142857,151.714285714286,153.285714285714,137.142857142857,161.142857142857,155],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   438.85714<br />name: South Dakota","End_of_Week: 2021-01-16<br />positiveIncrease:   339.57143<br />name: South Dakota","End_of_Week: 2021-01-23<br />positiveIncrease:   240.71429<br />name: South Dakota","End_of_Week: 2021-01-30<br />positiveIncrease:   158.14286<br />name: South Dakota","End_of_Week: 2021-02-06<br />positiveIncrease:   151.71429<br />name: South Dakota","End_of_Week: 2021-02-13<br />positiveIncrease:   153.28571<br />name: South Dakota","End_of_Week: 2021-02-20<br />positiveIncrease:   137.14286<br />name: South Dakota","End_of_Week: 2021-02-27<br />positiveIncrease:   161.14286<br />name: South Dakota","End_of_Week: 2021-03-06<br />positiveIncrease:   155.00000<br />name: South Dakota"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(227,110,246,1)","dash":"solid"},"hoveron":"points","name":"South Dakota","legendgroup":"South Dakota","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[6045.42857142857,4913.85714285714,3575.57142857143,2695.14285714286,2495.85714285714,1979.71428571429,1133.85714285714,1411.28571428571,1188.42857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  6045.42857<br />name: Tennessee","End_of_Week: 2021-01-16<br />positiveIncrease:  4913.85714<br />name: Tennessee","End_of_Week: 2021-01-23<br />positiveIncrease:  3575.57143<br />name: Tennessee","End_of_Week: 2021-01-30<br />positiveIncrease:  2695.14286<br />name: Tennessee","End_of_Week: 2021-02-06<br />positiveIncrease:  2495.85714<br />name: Tennessee","End_of_Week: 2021-02-13<br />positiveIncrease:  1979.71429<br />name: Tennessee","End_of_Week: 2021-02-20<br />positiveIncrease:  1133.85714<br />name: Tennessee","End_of_Week: 2021-02-27<br />positiveIncrease:  1411.28571<br />name: Tennessee","End_of_Week: 2021-03-06<br />positiveIncrease:  1188.42857<br />name: Tennessee"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(237,104,237,1)","dash":"solid"},"hoveron":"points","name":"Tennessee","legendgroup":"Tennessee","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[23043.5714285714,22715.5714285714,18771.5714285714,17185.8571428571,18217.2857142857,10906.2857142857,4355.71428571429,8084.57142857143,6236.57142857143],"text":["End_of_Week: 2021-01-09<br />positiveIncrease: 23043.57143<br />name: Texas","End_of_Week: 2021-01-16<br />positiveIncrease: 22715.57143<br />name: Texas","End_of_Week: 2021-01-23<br />positiveIncrease: 18771.57143<br />name: Texas","End_of_Week: 2021-01-30<br />positiveIncrease: 17185.85714<br />name: Texas","End_of_Week: 2021-02-06<br />positiveIncrease: 18217.28571<br />name: Texas","End_of_Week: 2021-02-13<br />positiveIncrease: 10906.28571<br />name: Texas","End_of_Week: 2021-02-20<br />positiveIncrease:  4355.71429<br />name: Texas","End_of_Week: 2021-02-27<br />positiveIncrease:  8084.57143<br />name: Texas","End_of_Week: 2021-03-06<br />positiveIncrease:  6236.57143<br />name: Texas"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(245,100,227,1)","dash":"solid"},"hoveron":"points","name":"Texas","legendgroup":"Texas","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[3152.71428571429,2647,1805.28571428571,1505.85714285714,1181.42857142857,983.428571428571,778.571428571429,676.571428571429,524],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  3152.71429<br />name: Utah","End_of_Week: 2021-01-16<br />positiveIncrease:  2647.00000<br />name: Utah","End_of_Week: 2021-01-23<br />positiveIncrease:  1805.28571<br />name: Utah","End_of_Week: 2021-01-30<br />positiveIncrease:  1505.85714<br />name: Utah","End_of_Week: 2021-02-06<br />positiveIncrease:  1181.42857<br />name: Utah","End_of_Week: 2021-02-13<br />positiveIncrease:   983.42857<br />name: Utah","End_of_Week: 2021-02-20<br />positiveIncrease:   778.57143<br />name: Utah","End_of_Week: 2021-02-27<br />positiveIncrease:   676.57143<br />name: Utah","End_of_Week: 2021-03-06<br />positiveIncrease:   524.00000<br />name: Utah"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(251,97,216,1)","dash":"solid"},"hoveron":"points","name":"Utah","legendgroup":"Utah","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[157.285714285714,160.714285714286,141.857142857143,131.857142857143,133.571428571429,113.571428571429,114,105.571428571429,123.714285714286],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   157.28571<br />name: Vermont","End_of_Week: 2021-01-16<br />positiveIncrease:   160.71429<br />name: Vermont","End_of_Week: 2021-01-23<br />positiveIncrease:   141.85714<br />name: Vermont","End_of_Week: 2021-01-30<br />positiveIncrease:   131.85714<br />name: Vermont","End_of_Week: 2021-02-06<br />positiveIncrease:   133.57143<br />name: Vermont","End_of_Week: 2021-02-13<br />positiveIncrease:   113.57143<br />name: Vermont","End_of_Week: 2021-02-20<br />positiveIncrease:   114.00000<br />name: Vermont","End_of_Week: 2021-02-27<br />positiveIncrease:   105.57143<br />name: Vermont","End_of_Week: 2021-03-06<br />positiveIncrease:   123.71429<br />name: Vermont"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(255,97,204,1)","dash":"solid"},"hoveron":"points","name":"Vermont","legendgroup":"Vermont","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[4994.28571428571,5096.57142857143,5609.14285714286,4795.14285714286,3422.14285714286,3035.42857142857,2055.42857142857,1786,1460.42857142857],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  4994.28571<br />name: Virginia","End_of_Week: 2021-01-16<br />positiveIncrease:  5096.57143<br />name: Virginia","End_of_Week: 2021-01-23<br />positiveIncrease:  5609.14286<br />name: Virginia","End_of_Week: 2021-01-30<br />positiveIncrease:  4795.14286<br />name: Virginia","End_of_Week: 2021-02-06<br />positiveIncrease:  3422.14286<br />name: Virginia","End_of_Week: 2021-02-13<br />positiveIncrease:  3035.42857<br />name: Virginia","End_of_Week: 2021-02-20<br />positiveIncrease:  2055.42857<br />name: Virginia","End_of_Week: 2021-02-27<br />positiveIncrease:  1786.00000<br />name: Virginia","End_of_Week: 2021-03-06<br />positiveIncrease:  1460.42857<br />name: Virginia"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(255,98,191,1)","dash":"solid"},"hoveron":"points","name":"Virginia","legendgroup":"Virginia","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[3122.14285714286,2480.42857142857,1754.14285714286,1650.28571428571,1367.14285714286,1113.71428571429,819.571428571429,845.428571428571,720.857142857143],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  3122.14286<br />name: Washington","End_of_Week: 2021-01-16<br />positiveIncrease:  2480.42857<br />name: Washington","End_of_Week: 2021-01-23<br />positiveIncrease:  1754.14286<br />name: Washington","End_of_Week: 2021-01-30<br />positiveIncrease:  1650.28571<br />name: Washington","End_of_Week: 2021-02-06<br />positiveIncrease:  1367.14286<br />name: Washington","End_of_Week: 2021-02-13<br />positiveIncrease:  1113.71429<br />name: Washington","End_of_Week: 2021-02-20<br />positiveIncrease:   819.57143<br />name: Washington","End_of_Week: 2021-02-27<br />positiveIncrease:   845.42857<br />name: Washington","End_of_Week: 2021-03-06<br />positiveIncrease:   720.85714<br />name: Washington"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(255,100,176,1)","dash":"solid"},"hoveron":"points","name":"Washington","legendgroup":"Washington","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[1493,1192.28571428571,946.857142857143,798.285714285714,550,441.714285714286,297.428571428571,316.571428571429,244.285714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  1493.00000<br />name: West Virginia","End_of_Week: 2021-01-16<br />positiveIncrease:  1192.28571<br />name: West Virginia","End_of_Week: 2021-01-23<br />positiveIncrease:   946.85714<br />name: West Virginia","End_of_Week: 2021-01-30<br />positiveIncrease:   798.28571<br />name: West Virginia","End_of_Week: 2021-02-06<br />positiveIncrease:   550.00000<br />name: West Virginia","End_of_Week: 2021-02-13<br />positiveIncrease:   441.71429<br />name: West Virginia","End_of_Week: 2021-02-20<br />positiveIncrease:   297.42857<br />name: West Virginia","End_of_Week: 2021-02-27<br />positiveIncrease:   316.57143<br />name: West Virginia","End_of_Week: 2021-03-06<br />positiveIncrease:   244.28571<br />name: West Virginia"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(255,104,161,1)","dash":"solid"},"hoveron":"points","name":"West Virginia","legendgroup":"West Virginia","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[3497.42857142857,2591.57142857143,1961.14285714286,1570.57142857143,1288.42857142857,947.857142857143,734,728.142857142857,627.285714285714],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:  3497.42857<br />name: Wisconsin","End_of_Week: 2021-01-16<br />positiveIncrease:  2591.57143<br />name: Wisconsin","End_of_Week: 2021-01-23<br />positiveIncrease:  1961.14286<br />name: Wisconsin","End_of_Week: 2021-01-30<br />positiveIncrease:  1570.57143<br />name: Wisconsin","End_of_Week: 2021-02-06<br />positiveIncrease:  1288.42857<br />name: Wisconsin","End_of_Week: 2021-02-13<br />positiveIncrease:   947.85714<br />name: Wisconsin","End_of_Week: 2021-02-20<br />positiveIncrease:   734.00000<br />name: Wisconsin","End_of_Week: 2021-02-27<br />positiveIncrease:   728.14286<br />name: Wisconsin","End_of_Week: 2021-03-06<br />positiveIncrease:   627.28571<br />name: Wisconsin"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(255,108,145,1)","dash":"solid"},"hoveron":"points","name":"Wisconsin","legendgroup":"Wisconsin","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[18636,18643,18650,18657,18664,18671,18678,18685,18692],"y":[306.571428571429,335.571428571429,216.428571428571,160.142857142857,130.571428571429,66.8571428571429,85.2857142857143,95.2857142857143,59.1428571428571],"text":["End_of_Week: 2021-01-09<br />positiveIncrease:   306.57143<br />name: Wyoming","End_of_Week: 2021-01-16<br />positiveIncrease:   335.57143<br />name: Wyoming","End_of_Week: 2021-01-23<br />positiveIncrease:   216.42857<br />name: Wyoming","End_of_Week: 2021-01-30<br />positiveIncrease:   160.14286<br />name: Wyoming","End_of_Week: 2021-02-06<br />positiveIncrease:   130.57143<br />name: Wyoming","End_of_Week: 2021-02-13<br />positiveIncrease:    66.85714<br />name: Wyoming","End_of_Week: 2021-02-20<br />positiveIncrease:    85.28571<br />name: Wyoming","End_of_Week: 2021-02-27<br />positiveIncrease:    95.28571<br />name: Wyoming","End_of_Week: 2021-03-06<br />positiveIncrease:    59.14286<br />name: Wyoming"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(255,108,145,1)","dash":"solid"},"hoveron":"points","name":"Wyoming","legendgroup":"Wyoming","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.2283105022831,"r":7.30593607305936,"b":40.1826484018265,"l":54.7945205479452},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[18633.2,18694.8],"tickmode":"array","ticktext":["Jan 15","Feb 01","Feb 15","Mar 01"],"tickvals":[18642,18659,18673,18687],"categoryorder":"array","categoryarray":["Jan 15","Feb 01","Feb 15","Mar 01"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"date","hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1930.53571428571,41842.3928571429],"tickmode":"array","ticktext":["0","10000","20000","30000","40000"],"tickvals":[0,10000,20000,30000,40000],"categoryorder":"array","categoryarray":["0","10000","20000","30000","40000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"positive increase","hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"name","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"compare","barmode":"relative","title":"positive case increase trend"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"2a6470b149c4":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"2a6470b149c4","visdat":{"2a6470b149c4":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="interpret" class="section level1">
+<h1>Interpret</h1>
+<p>The PIR decreases from January to March for all states in general. But the fluctuation of the trend is not similar in each state. Some states like Texas even have an increase in the middle of February. California stands out in this plot as it has a high daily positive increase at the beginning of 2021. But the daily increase number sharply decreased to an average level of other states from January to March.</p>
+</div>
+
+<p>Copyright &copy; 2022, Xinyi Liu.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

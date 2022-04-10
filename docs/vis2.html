@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xinyi Liu" />
+
+
+<title>The relationship between vaccination, mean PPR and pop density</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">JSC370 Homework 5</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chart-bar"></span>
+     
+    Interactive Visualizations
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="vis1.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 1
+      </a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="vis2.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 2
+      </a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="vis3.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 3
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JSC370/jsc370-2022/">
+    <span class="fa fa-github fa-lg"></span>
+     
+    JSC370
+  </a>
+</li>
+<li>
+  <a href="https://github.com/Helenlxy/JSC370-HW5/">
+    <span class="fa fa-github fa-lg"></span>
+     
+    Homework 5
+  </a>
+</li>
+<li>
+  <a href="https://jsc370.github.io/jsc370-2022/">JSC370 Home</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">The relationship between vaccination, mean PPR and pop density</h1>
+<h4 class="author">Xinyi Liu</h4>
+
+</div>
+
+
+<p>This page shows the second interactive visualization: the relationship between the vaccination status, the mean positive population rate and the population density of each state in the U.S.</p>
+<div id="process-covid-data" class="section level1">
+<h1>Process COVID data</h1>
+<p>For this visualization, I used 4 variables: <code>positiveIncrease</code> from the COVID tracking project which is the daily increase of confirmed cases, <code>Admin_Per_100K</code> from CDC which is the total number of doses administered per 100,000 census population based on the jurisdiction where the recipient lives, <code>population</code> and <code>pop_density</code> from us_census_data.</p>
+<p>I also created a variable called <code>positivePopRate</code> which is calculated by dividing the <code>positiveIncrease</code> by the <code>population</code> to calculate the daily confirmed patient rate at state-level and used the rate to reflect the severity of COVID-19 for each state. PPR(<code>positivePopRate</code>) represents the percentage of people that are confirmed to get COVID-19 in each state on each day.</p>
+</div>
+<div id="display" class="section level1">
+<h1>Display</h1>
+<p>The size of each circle reflects the population density of each state.</p>
+<div id="htmlwidget-042404ed8ab3dd2cb644" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-042404ed8ab3dd2cb644">{"x":{"visdat":{"2a6456c7c51":["function () ","plotlyVisDat"]},"cur_data":"2a6456c7c51","attrs":{"2a6456c7c51":{"x":{},"y":{},"mode":"markers","marker":{"sizemode":"diameter","opacity":0.5},"hover_info":"text","text":{},"color":{},"size":{},"alpha_stroke":1,"sizes":[5,70],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Relationship between vaccine and mean positive population rate","yaxis":{"domain":[0,1],"automargin":true,"title":"mean positivePopRate"},"xaxis":{"domain":[0,1],"automargin":true,"title":"the number of doses administered per 100k"},"hovermode":"compare","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[804],"y":[0.00042201318973967],"mode":"markers","marker":{"color":"rgba(102,194,165,1)","size":[9.88342754074322],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(102,194,165,1)"}},"hover_info":"text","text":" State: AL <br> Doses per 100k: 804 <br> pop density: 96.50938865","type":"scatter","name":"Alabama","textfont":{"color":"rgba(102,194,165,1)","size":9.88342754074322},"error_y":{"color":"rgba(102,194,165,1)","width":9.88342754074322},"error_x":{"color":"rgba(102,194,165,1)","width":9.88342754074322},"line":{"color":"rgba(102,194,165,1)","width":9.88342754074322},"xaxis":"x","yaxis":"y","frame":null},{"x":[835],"y":[0.000632935657475352],"mode":"markers","marker":{"color":"rgba(137,188,155,1)","size":[8.08374299622293],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(137,188,155,1)"}},"hover_info":"text","text":" State: AZ <br> Doses per 100k: 835 <br> pop density: 63.135855048","type":"scatter","name":"Arizona","textfont":{"color":"rgba(137,188,155,1)","size":8.08374299622293},"error_y":{"color":"rgba(137,188,155,1)","width":8.08374299622293},"error_x":{"color":"rgba(137,188,155,1)","width":8.08374299622293},"line":{"color":"rgba(137,188,155,1)","width":8.08374299622293},"xaxis":"x","yaxis":"y","frame":null},{"x":[1355],"y":[0.000490917582321363],"mode":"markers","marker":{"color":"rgba(164,181,145,1)","size":[7.80245838034265],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(164,181,145,1)"}},"hover_info":"text","text":" State: AR <br> Doses per 100k: 1355 <br> pop density: 57.919684465","type":"scatter","name":"Arkansas","textfont":{"color":"rgba(164,181,145,1)","size":7.80245838034265},"error_y":{"color":"rgba(164,181,145,1)","width":7.80245838034265},"error_x":{"color":"rgba(164,181,145,1)","width":7.80245838034265},"line":{"color":"rgba(164,181,145,1)","width":7.80245838034265},"xaxis":"x","yaxis":"y","frame":null},{"x":[1097],"y":[0.000462129067463465],"mode":"markers","marker":{"color":"rgba(186,174,135,1)","size":[18.3711458676702],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(186,174,135,1)"}},"hover_info":"text","text":" State: CA <br> Doses per 100k: 1097 <br> pop density: 253.9065023","type":"scatter","name":"California","textfont":{"color":"rgba(186,174,135,1)","size":18.3711458676702},"error_y":{"color":"rgba(186,174,135,1)","width":18.3711458676702},"error_x":{"color":"rgba(186,174,135,1)","width":18.3711458676702},"line":{"color":"rgba(186,174,135,1)","width":18.3711458676702},"xaxis":"x","yaxis":"y","frame":null},{"x":[1847],"y":[0.00026918749454393],"mode":"markers","marker":{"color":"rgba(206,166,125,1)","size":[7.64263899840892],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(206,166,125,1)"}},"hover_info":"text","text":" State: CO <br> Doses per 100k: 1847 <br> pop density: 54.955977559","type":"scatter","name":"Colorado","textfont":{"color":"rgba(206,166,125,1)","size":7.64263899840892},"error_y":{"color":"rgba(206,166,125,1)","width":7.64263899840892},"error_x":{"color":"rgba(206,166,125,1)","width":7.64263899840892},"line":{"color":"rgba(206,166,125,1)","width":7.64263899840892},"xaxis":"x","yaxis":"y","frame":null},{"x":[2167],"y":[0.000423009109801742],"mode":"markers","marker":{"color":"rgba(224,158,115,1)","size":[44.4623580310329],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(224,158,115,1)"}},"hover_info":"text","text":" State: CT <br> Doses per 100k: 2167 <br> pop density: 737.74459965","type":"scatter","name":"Connecticut","textfont":{"color":"rgba(224,158,115,1)","size":44.4623580310329},"error_y":{"color":"rgba(224,158,115,1)","width":44.4623580310329},"error_x":{"color":"rgba(224,158,115,1)","width":44.4623580310329},"line":{"color":"rgba(224,158,115,1)","width":44.4623580310329},"xaxis":"x","yaxis":"y","frame":null},{"x":[1324],"y":[0.000480307704159536],"mode":"markers","marker":{"color":"rgba(241,148,105,1)","size":[31.4494798500015],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(241,148,105,1)"}},"hover_info":"text","text":" State: DE <br> Doses per 100k: 1324 <br> pop density: 496.4324605","type":"scatter","name":"Delaware","textfont":{"color":"rgba(241,148,105,1)","size":31.4494798500015},"error_y":{"color":"rgba(241,148,105,1)","width":31.4494798500015},"error_x":{"color":"rgba(241,148,105,1)","width":31.4494798500015},"line":{"color":"rgba(241,148,105,1)","width":31.4494798500015},"xaxis":"x","yaxis":"y","frame":null},{"x":[1208],"y":[0.000427859150987701],"mode":"markers","marker":{"color":"rgba(249,142,103,1)","size":[26.0883840943342],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(249,142,103,1)"}},"hover_info":"text","text":" State: FL <br> Doses per 100k: 1208 <br> pop density: 397.01575445","type":"scatter","name":"Florida","textfont":{"color":"rgba(249,142,103,1)","size":26.0883840943342},"error_y":{"color":"rgba(249,142,103,1)","width":26.0883840943342},"error_x":{"color":"rgba(249,142,103,1)","width":26.0883840943342},"line":{"color":"rgba(249,142,103,1)","width":26.0883840943342},"xaxis":"x","yaxis":"y","frame":null},{"x":[708],"y":[0.000507986000417895],"mode":"markers","marker":{"color":"rgba(236,145,119,1)","size":[14.5078305379662],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,145,119,1)"}},"hover_info":"text","text":" State: GA <br> Doses per 100k: 708 <br> pop density: 182.26478911","type":"scatter","name":"Georgia","textfont":{"color":"rgba(236,145,119,1)","size":14.5078305379662},"error_y":{"color":"rgba(236,145,119,1)","width":14.5078305379662},"error_x":{"color":"rgba(236,145,119,1)","width":14.5078305379662},"line":{"color":"rgba(236,145,119,1)","width":14.5078305379662},"xaxis":"x","yaxis":"y","frame":null},{"x":[1037],"y":[0.00028729104756577],"mode":"markers","marker":{"color":"rgba(223,148,134,1)","size":[5.82372217061584],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(223,148,134,1)"}},"hover_info":"text","text":" State: ID <br> Doses per 100k: 1037 <br> pop density: 21.225798536","type":"scatter","name":"Idaho","textfont":{"color":"rgba(223,148,134,1)","size":5.82372217061584},"error_y":{"color":"rgba(223,148,134,1)","width":5.82372217061584},"error_x":{"color":"rgba(223,148,134,1)","width":5.82372217061584},"line":{"color":"rgba(223,148,134,1)","width":5.82372217061584},"xaxis":"x","yaxis":"y","frame":null},{"x":[1349],"y":[0.000276464814400374],"mode":"markers","marker":{"color":"rgba(208,151,150,1)","size":[17.0556145851889],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(208,151,150,1)"}},"hover_info":"text","text":" State: IL <br> Doses per 100k: 1349 <br> pop density: 229.51115613","type":"scatter","name":"Illinois","textfont":{"color":"rgba(208,151,150,1)","size":17.0556145851889},"error_y":{"color":"rgba(208,151,150,1)","width":17.0556145851889},"error_x":{"color":"rgba(208,151,150,1)","width":17.0556145851889},"line":{"color":"rgba(208,151,150,1)","width":17.0556145851889},"xaxis":"x","yaxis":"y","frame":null},{"x":[1354],"y":[0.000340203926999741],"mode":"markers","marker":{"color":"rgba(192,154,165,1)","size":[14.7517210634606],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(192,154,165,1)"}},"hover_info":"text","text":" State: IN <br> Doses per 100k: 1354 <br> pop density: 186.78751987","type":"scatter","name":"Indiana","textfont":{"color":"rgba(192,154,165,1)","size":14.7517210634606},"error_y":{"color":"rgba(192,154,165,1)","width":14.7517210634606},"error_x":{"color":"rgba(192,154,165,1)","width":14.7517210634606},"line":{"color":"rgba(192,154,165,1)","width":14.7517210634606},"xaxis":"x","yaxis":"y","frame":null},{"x":[1739],"y":[0.000205620544673408],"mode":"markers","marker":{"color":"rgba(174,157,181,1)","size":[7.72627993165058],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(174,157,181,1)"}},"hover_info":"text","text":" State: IA <br> Doses per 100k: 1739 <br> pop density: 56.507023549","type":"scatter","name":"Iowa","textfont":{"color":"rgba(174,157,181,1)","size":7.72627993165058},"error_y":{"color":"rgba(174,157,181,1)","width":7.72627993165058},"error_x":{"color":"rgba(174,157,181,1)","width":7.72627993165058},"line":{"color":"rgba(174,157,181,1)","width":7.72627993165058},"xaxis":"x","yaxis":"y","frame":null},{"x":[680],"y":[0.000371356514656973],"mode":"markers","marker":{"color":"rgba(152,159,196,1)","size":[6.59943697744279],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(152,159,196,1)"}},"hover_info":"text","text":" State: KS <br> Doses per 100k: 680 <br> pop density: 35.610732968","type":"scatter","name":"Kansas","textfont":{"color":"rgba(152,159,196,1)","size":6.59943697744279},"error_y":{"color":"rgba(152,159,196,1)","width":6.59943697744279},"error_x":{"color":"rgba(152,159,196,1)","width":6.59943697744279},"line":{"color":"rgba(152,159,196,1)","width":6.59943697744279},"xaxis":"x","yaxis":"y","frame":null},{"x":[1358],"y":[0.000483866740528518],"mode":"markers","marker":{"color":"rgba(150,159,202,1)","size":[10.7808774414983],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(150,159,202,1)"}},"hover_info":"text","text":" State: KY <br> Doses per 100k: 1358 <br> pop density: 113.15179107","type":"scatter","name":"Kentucky","textfont":{"color":"rgba(150,159,202,1)","size":10.7808774414983},"error_y":{"color":"rgba(150,159,202,1)","width":10.7808774414983},"error_x":{"color":"rgba(150,159,202,1)","width":10.7808774414983},"line":{"color":"rgba(150,159,202,1)","width":10.7808774414983},"xaxis":"x","yaxis":"y","frame":null},{"x":[1067],"y":[0.000401153198441083],"mode":"markers","marker":{"color":"rgba(165,156,201,1)","size":[10.4955210109051],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(165,156,201,1)"}},"hover_info":"text","text":" State: LA <br> Doses per 100k: 1067 <br> pop density: 107.86011234","type":"scatter","name":"Louisiana","textfont":{"color":"rgba(165,156,201,1)","size":10.4955210109051},"error_y":{"color":"rgba(165,156,201,1)","width":10.4955210109051},"error_x":{"color":"rgba(165,156,201,1)","width":10.4955210109051},"line":{"color":"rgba(165,156,201,1)","width":10.4955210109051},"xaxis":"x","yaxis":"y","frame":null},{"x":[2295],"y":[0.000241818459636099],"mode":"markers","marker":{"color":"rgba(179,153,200,1)","size":[7.01902890420017],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(179,153,200,1)"}},"hover_info":"text","text":" State: ME <br> Doses per 100k: 2295 <br> pop density: 43.391688419","type":"scatter","name":"Maine","textfont":{"color":"rgba(179,153,200,1)","size":7.01902890420017},"error_y":{"color":"rgba(179,153,200,1)","width":7.01902890420017},"error_x":{"color":"rgba(179,153,200,1)","width":7.01902890420017},"line":{"color":"rgba(179,153,200,1)","width":7.01902890420017},"xaxis":"x","yaxis":"y","frame":null},{"x":[1052],"y":[0.00027171363761951],"mode":"markers","marker":{"color":"rgba(193,150,199,1)","size":[38.2348862045945],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(193,150,199,1)"}},"hover_info":"text","text":" State: MD <br> Doses per 100k: 1052 <br> pop density: 622.26172745","type":"scatter","name":"Maryland","textfont":{"color":"rgba(193,150,199,1)","size":38.2348862045945},"error_y":{"color":"rgba(193,150,199,1)","width":38.2348862045945},"error_x":{"color":"rgba(193,150,199,1)","width":38.2348862045945},"line":{"color":"rgba(193,150,199,1)","width":38.2348862045945},"xaxis":"x","yaxis":"y","frame":null},{"x":[1600],"y":[0.000473167562142315],"mode":"markers","marker":{"color":"rgba(205,147,198,1)","size":[52.3896937829699],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(205,147,198,1)"}},"hover_info":"text","text":" State: MA <br> Doses per 100k: 1600 <br> pop density: 884.74992172","type":"scatter","name":"Massachusetts","textfont":{"color":"rgba(205,147,198,1)","size":52.3896937829699},"error_y":{"color":"rgba(205,147,198,1)","width":52.3896937829699},"error_x":{"color":"rgba(205,147,198,1)","width":52.3896937829699},"line":{"color":"rgba(205,147,198,1)","width":52.3896937829699},"xaxis":"x","yaxis":"y","frame":null},{"x":[923],"y":[0.000187300321705226],"mode":"markers","marker":{"color":"rgba(218,143,196,1)","size":[14.2021963612845],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(218,143,196,1)"}},"hover_info":"text","text":" State: MI <br> Doses per 100k: 923 <br> pop density: 176.59707779","type":"scatter","name":"Michigan","textfont":{"color":"rgba(218,143,196,1)","size":14.2021963612845},"error_y":{"color":"rgba(218,143,196,1)","width":14.2021963612845},"error_x":{"color":"rgba(218,143,196,1)","width":14.2021963612845},"line":{"color":"rgba(218,143,196,1)","width":14.2021963612845},"xaxis":"x","yaxis":"y","frame":null},{"x":[1462],"y":[0.000201649611158736],"mode":"markers","marker":{"color":"rgba(229,139,195,1)","size":[8.47922290045501],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(229,139,195,1)"}},"hover_info":"text","text":" State: MN <br> Doses per 100k: 1462 <br> pop density: 70.469674696","type":"scatter","name":"Minnesota","textfont":{"color":"rgba(229,139,195,1)","size":8.47922290045501},"error_y":{"color":"rgba(229,139,195,1)","width":8.47922290045501},"error_x":{"color":"rgba(229,139,195,1)","width":8.47922290045501},"line":{"color":"rgba(229,139,195,1)","width":8.47922290045501},"xaxis":"x","yaxis":"y","frame":null},{"x":[725],"y":[0.000409478771323454],"mode":"markers","marker":{"color":"rgba(225,150,182,1)","size":[8.11123262141131],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(225,150,182,1)"}},"hover_info":"text","text":" State: MS <br> Doses per 100k: 725 <br> pop density: 63.645625459","type":"scatter","name":"Mississippi","textfont":{"color":"rgba(225,150,182,1)","size":8.11123262141131},"error_y":{"color":"rgba(225,150,182,1)","width":8.11123262141131},"error_x":{"color":"rgba(225,150,182,1)","width":8.11123262141131},"line":{"color":"rgba(225,150,182,1)","width":8.11123262141131},"xaxis":"x","yaxis":"y","frame":null},{"x":[1459],"y":[0.000209593332660322],"mode":"markers","marker":{"color":"rgba(218,163,167,1)","size":[9.48481466122459],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(218,163,167,1)"}},"hover_info":"text","text":" State: MO <br> Doses per 100k: 1459 <br> pop density: 89.117470789","type":"scatter","name":"Missouri","textfont":{"color":"rgba(218,163,167,1)","size":9.48481466122459},"error_y":{"color":"rgba(218,163,167,1)","width":9.48481466122459},"error_x":{"color":"rgba(218,163,167,1)","width":9.48481466122459},"line":{"color":"rgba(218,163,167,1)","width":9.48481466122459},"xaxis":"x","yaxis":"y","frame":null},{"x":[2154],"y":[0.000282374886655202],"mode":"markers","marker":{"color":"rgba(210,175,152,1)","size":[5.07269914952147],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(210,175,152,1)"}},"hover_info":"text","text":" State: MT <br> Doses per 100k: 2154 <br> pop density: 7.298751095","type":"scatter","name":"Montana","textfont":{"color":"rgba(210,175,152,1)","size":5.07269914952147},"error_y":{"color":"rgba(210,175,152,1)","width":5.07269914952147},"error_x":{"color":"rgba(210,175,152,1)","width":5.07269914952147},"line":{"color":"rgba(210,175,152,1)","width":5.07269914952147},"xaxis":"x","yaxis":"y","frame":null},{"x":[1843],"y":[0.000287443504767381],"mode":"markers","marker":{"color":"rgba(200,186,136,1)","size":[6.03344510794525],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(200,186,136,1)"}},"hover_info":"text","text":" State: NE <br> Doses per 100k: 1843 <br> pop density: 25.114922059","type":"scatter","name":"Nebraska","textfont":{"color":"rgba(200,186,136,1)","size":6.03344510794525},"error_y":{"color":"rgba(200,186,136,1)","width":6.03344510794525},"error_x":{"color":"rgba(200,186,136,1)","width":6.03344510794525},"line":{"color":"rgba(200,186,136,1)","width":6.03344510794525},"xaxis":"x","yaxis":"y","frame":null},{"x":[1087],"y":[0.000348329501912823],"mode":"markers","marker":{"color":"rgba(190,197,119,1)","size":[6.16964369297589],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(190,197,119,1)"}},"hover_info":"text","text":" State: NV <br> Doses per 100k: 1087 <br> pop density: 27.6406025","type":"scatter","name":"Nevada","textfont":{"color":"rgba(190,197,119,1)","size":6.16964369297589},"error_y":{"color":"rgba(190,197,119,1)","width":6.16964369297589},"error_x":{"color":"rgba(190,197,119,1)","width":6.16964369297589},"line":{"color":"rgba(190,197,119,1)","width":6.16964369297589},"xaxis":"x","yaxis":"y","frame":null},{"x":[2065],"y":[0.000368735783322892],"mode":"markers","marker":{"color":"rgba(178,207,101,1)","size":[12.8488560512564],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(178,207,101,1)"}},"hover_info":"text","text":" State: NH <br> Doses per 100k: 2065 <br> pop density: 151.50059716","type":"scatter","name":"New Hampshire","textfont":{"color":"rgba(178,207,101,1)","size":12.8488560512564},"error_y":{"color":"rgba(178,207,101,1)","width":12.8488560512564},"error_x":{"color":"rgba(178,207,101,1)","width":12.8488560512564},"line":{"color":"rgba(178,207,101,1)","width":12.8488560512564},"xaxis":"x","yaxis":"y","frame":null},{"x":[1113],"y":[0.000483553500665209],"mode":"markers","marker":{"color":"rgba(168,216,83,1)","size":[70],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(168,216,83,1)"}},"hover_info":"text","text":" State: NJ <br> Doses per 100k: 1113 <br> pop density: 1211.3172349","type":"scatter","name":"New Jersey","textfont":{"color":"rgba(168,216,83,1)","size":70},"error_y":{"color":"rgba(168,216,83,1)","width":70},"error_x":{"color":"rgba(168,216,83,1)","width":70},"line":{"color":"rgba(168,216,83,1)","width":70},"xaxis":"x","yaxis":"y","frame":null},{"x":[1942],"y":[0.000313327661726175],"mode":"markers","marker":{"color":"rgba(183,217,79,1)","size":[5.61056905746535],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(183,217,79,1)"}},"hover_info":"text","text":" State: NM <br> Doses per 100k: 1942 <br> pop density: 17.273065483","type":"scatter","name":"New Mexico","textfont":{"color":"rgba(183,217,79,1)","size":5.61056905746535},"error_y":{"color":"rgba(183,217,79,1)","width":5.61056905746535},"error_x":{"color":"rgba(183,217,79,1)","width":5.61056905746535},"line":{"color":"rgba(183,217,79,1)","width":5.61056905746535},"xaxis":"x","yaxis":"y","frame":null},{"x":[1368],"y":[0.00054306138306161],"mode":"markers","marker":{"color":"rgba(197,217,74,1)","size":[27.0421504015127],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(197,217,74,1)"}},"hover_info":"text","text":" State: NY <br> Doses per 100k: 1368 <br> pop density: 414.70249405","type":"scatter","name":"New York","textfont":{"color":"rgba(197,217,74,1)","size":27.0421504015127},"error_y":{"color":"rgba(197,217,74,1)","width":27.0421504015127},"error_x":{"color":"rgba(197,217,74,1)","width":27.0421504015127},"line":{"color":"rgba(197,217,74,1)","width":27.0421504015127},"xaxis":"x","yaxis":"y","frame":null},{"x":[1030],"y":[0.000479599997590833],"mode":"markers","marker":{"color":"rgba(210,217,69,1)","size":[16.1959523229696],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(210,217,69,1)"}},"hover_info":"text","text":" State: NC <br> Doses per 100k: 1030 <br> pop density: 213.56949153","type":"scatter","name":"North Carolina","textfont":{"color":"rgba(210,217,69,1)","size":16.1959523229696},"error_y":{"color":"rgba(210,217,69,1)","width":16.1959523229696},"error_x":{"color":"rgba(210,217,69,1)","width":16.1959523229696},"line":{"color":"rgba(210,217,69,1)","width":16.1959523229696},"xaxis":"x","yaxis":"y","frame":null},{"x":[2895],"y":[0.000155915698683076],"mode":"markers","marker":{"color":"rgba(223,217,63,1)","size":[5.27313800257318],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(223,217,63,1)"}},"hover_info":"text","text":" State: ND <br> Doses per 100k: 2895 <br> pop density: 11.015709613","type":"scatter","name":"North Dakota","textfont":{"color":"rgba(223,217,63,1)","size":5.27313800257318},"error_y":{"color":"rgba(223,217,63,1)","width":5.27313800257318},"error_x":{"color":"rgba(223,217,63,1)","width":5.27313800257318},"line":{"color":"rgba(223,217,63,1)","width":5.27313800257318},"xaxis":"x","yaxis":"y","frame":null},{"x":[1368],"y":[0.000357211505442533],"mode":"markers","marker":{"color":"rgba(236,217,58,1)","size":[20.1061116483629],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,217,58,1)"}},"hover_info":"text","text":" State: OH <br> Doses per 100k: 1368 <br> pop density: 286.07988455","type":"scatter","name":"Ohio","textfont":{"color":"rgba(236,217,58,1)","size":20.1061116483629},"error_y":{"color":"rgba(236,217,58,1)","width":20.1061116483629},"error_x":{"color":"rgba(236,217,58,1)","width":20.1061116483629},"line":{"color":"rgba(236,217,58,1)","width":20.1061116483629},"xaxis":"x","yaxis":"y","frame":null},{"x":[1569],"y":[0.000533307350898376],"mode":"markers","marker":{"color":"rgba(248,217,51,1)","size":[7.77888850232495],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(248,217,51,1)"}},"hover_info":"text","text":" State: OK <br> Doses per 100k: 1569 <br> pop density: 57.482602245","type":"scatter","name":"Oklahoma","textfont":{"color":"rgba(248,217,51,1)","size":7.77888850232495},"error_y":{"color":"rgba(248,217,51,1)","width":7.77888850232495},"error_x":{"color":"rgba(248,217,51,1)","width":7.77888850232495},"line":{"color":"rgba(248,217,51,1)","width":7.77888850232495},"xaxis":"x","yaxis":"y","frame":null},{"x":[1074],"y":[0.000157358531697218],"mode":"markers","marker":{"color":"rgba(254,216,57,1)","size":[7.03343593330712],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(254,216,57,1)"}},"hover_info":"text","text":" State: OR <br> Doses per 100k: 1074 <br> pop density: 43.658853835","type":"scatter","name":"Oregon","textfont":{"color":"rgba(254,216,57,1)","size":7.03343593330712},"error_y":{"color":"rgba(254,216,57,1)","width":7.03343593330712},"error_x":{"color":"rgba(254,216,57,1)","width":7.03343593330712},"line":{"color":"rgba(254,216,57,1)","width":7.03343593330712},"xaxis":"x","yaxis":"y","frame":null},{"x":[1249],"y":[0.000359044276149373],"mode":"markers","marker":{"color":"rgba(250,212,76,1)","size":[20.1144523003254],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(250,212,76,1)"}},"hover_info":"text","text":" State: PA <br> Doses per 100k: 1249 <br> pop density: 286.23455445","type":"scatter","name":"Pennsylvania","textfont":{"color":"rgba(250,212,76,1)","size":20.1144523003254},"error_y":{"color":"rgba(250,212,76,1)","width":20.1144523003254},"error_x":{"color":"rgba(250,212,76,1)","width":20.1144523003254},"line":{"color":"rgba(250,212,76,1)","width":20.1144523003254},"xaxis":"x","yaxis":"y","frame":null},{"x":[1929],"y":[0.00056040424048066],"mode":"markers","marker":{"color":"rgba(247,209,92,1)","size":[59.8260558154198],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(247,209,92,1)"}},"hover_info":"text","text":" State: RI <br> Doses per 100k: 1929 <br> pop density: 1022.6505771","type":"scatter","name":"Rhode Island","textfont":{"color":"rgba(247,209,92,1)","size":59.8260558154198},"error_y":{"color":"rgba(247,209,92,1)","width":59.8260558154198},"error_x":{"color":"rgba(247,209,92,1)","width":59.8260558154198},"line":{"color":"rgba(247,209,92,1)","width":59.8260558154198},"xaxis":"x","yaxis":"y","frame":null},{"x":[1031],"y":[0.000661064624848378],"mode":"markers","marker":{"color":"rgba(243,206,106,1)","size":[13.7985153415319],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(243,206,106,1)"}},"hover_info":"text","text":" State: SC <br> Doses per 100k: 1031 <br> pop density: 169.11117582","type":"scatter","name":"South Carolina","textfont":{"color":"rgba(243,206,106,1)","size":13.7985153415319},"error_y":{"color":"rgba(243,206,106,1)","width":13.7985153415319},"error_x":{"color":"rgba(243,206,106,1)","width":13.7985153415319},"line":{"color":"rgba(243,206,106,1)","width":13.7985153415319},"xaxis":"x","yaxis":"y","frame":null},{"x":[3174],"y":[0.000243771208423484],"mode":"markers","marker":{"color":"rgba(239,203,120,1)","size":[5.30666563194934],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(239,203,120,1)"}},"hover_info":"text","text":" State: SD <br> Doses per 100k: 3174 <br> pop density: 11.637449389","type":"scatter","name":"South Dakota","textfont":{"color":"rgba(239,203,120,1)","size":5.30666563194934},"error_y":{"color":"rgba(239,203,120,1)","width":5.30666563194934},"error_x":{"color":"rgba(239,203,120,1)","width":5.30666563194934},"line":{"color":"rgba(239,203,120,1)","width":5.30666563194934},"xaxis":"x","yaxis":"y","frame":null},{"x":[1836],"y":[0.000417513626799876],"mode":"markers","marker":{"color":"rgba(235,200,132,1)","size":[13.5322825062303],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(235,200,132,1)"}},"hover_info":"text","text":" State: TN <br> Doses per 100k: 1836 <br> pop density: 164.17412699","type":"scatter","name":"Tennessee","textfont":{"color":"rgba(235,200,132,1)","size":13.5322825062303},"error_y":{"color":"rgba(235,200,132,1)","width":13.5322825062303},"error_x":{"color":"rgba(235,200,132,1)","width":13.5322825062303},"line":{"color":"rgba(235,200,132,1)","width":13.5322825062303},"xaxis":"x","yaxis":"y","frame":null},{"x":[1935],"y":[0.000501388596369947],"mode":"markers","marker":{"color":"rgba(230,197,145,1)","size":[10.6033911956978],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(230,197,145,1)"}},"hover_info":"text","text":" State: TX <br> Doses per 100k: 1935 <br> pop density: 109.86046804","type":"scatter","name":"Texas","textfont":{"color":"rgba(230,197,145,1)","size":10.6033911956978},"error_y":{"color":"rgba(230,197,145,1)","width":10.6033911956978},"error_x":{"color":"rgba(230,197,145,1)","width":10.6033911956978},"line":{"color":"rgba(230,197,145,1)","width":10.6033911956978},"xaxis":"x","yaxis":"y","frame":null},{"x":[1494],"y":[0.00046590097600741],"mode":"markers","marker":{"color":"rgba(224,194,151,1)","size":[6.75298885774419],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(224,194,151,1)"}},"hover_info":"text","text":" State: UT <br> Doses per 100k: 1494 <br> pop density: 38.458214685","type":"scatter","name":"Utah","textfont":{"color":"rgba(224,194,151,1)","size":6.75298885774419},"error_y":{"color":"rgba(224,194,151,1)","width":6.75298885774419},"error_x":{"color":"rgba(224,194,151,1)","width":6.75298885774419},"line":{"color":"rgba(224,194,151,1)","width":6.75298885774419},"xaxis":"x","yaxis":"y","frame":null},{"x":[2496],"y":[0.000209722842203494],"mode":"markers","marker":{"color":"rgba(217,192,156,1)","size":[8.34302436336414],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(217,192,156,1)"}},"hover_info":"text","text":" State: VT <br> Doses per 100k: 2496 <br> pop density: 67.943995144","type":"scatter","name":"Vermont","textfont":{"color":"rgba(217,192,156,1)","size":8.34302436336414},"error_y":{"color":"rgba(217,192,156,1)","width":8.34302436336414},"error_x":{"color":"rgba(217,192,156,1)","width":8.34302436336414},"line":{"color":"rgba(217,192,156,1)","width":8.34302436336414},"xaxis":"x","yaxis":"y","frame":null},{"x":[1183],"y":[0.000420752971005769],"mode":"markers","marker":{"color":"rgba(210,189,161,1)","size":[16.3127987688288],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(210,189,161,1)"}},"hover_info":"text","text":" State: VA <br> Doses per 100k: 1183 <br> pop density: 215.73630393","type":"scatter","name":"Virginia","textfont":{"color":"rgba(210,189,161,1)","size":16.3127987688288},"error_y":{"color":"rgba(210,189,161,1)","width":16.3127987688288},"error_x":{"color":"rgba(210,189,161,1)","width":16.3127987688288},"line":{"color":"rgba(210,189,161,1)","width":16.3127987688288},"xaxis":"x","yaxis":"y","frame":null},{"x":[1116],"y":[0.000204565747998241],"mode":"markers","marker":{"color":"rgba(203,187,165,1)","size":[10.7941127057981],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(203,187,165,1)"}},"hover_info":"text","text":" State: WA <br> Doses per 100k: 1116 <br> pop density: 113.39722716","type":"scatter","name":"Washington","textfont":{"color":"rgba(203,187,165,1)","size":10.7941127057981},"error_y":{"color":"rgba(203,187,165,1)","width":10.7941127057981},"error_x":{"color":"rgba(203,187,165,1)","width":10.7941127057981},"line":{"color":"rgba(203,187,165,1)","width":10.7941127057981},"xaxis":"x","yaxis":"y","frame":null},{"x":[3082],"y":[0.000386428746874237],"mode":"markers","marker":{"color":"rgba(195,184,170,1)","size":[8.72966981754937],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(195,184,170,1)"}},"hover_info":"text","text":" State: WV <br> Doses per 100k: 3082 <br> pop density: 75.11398785","type":"scatter","name":"West Virginia","textfont":{"color":"rgba(195,184,170,1)","size":8.72966981754937},"error_y":{"color":"rgba(195,184,170,1)","width":8.72966981754937},"error_x":{"color":"rgba(195,184,170,1)","width":8.72966981754937},"line":{"color":"rgba(195,184,170,1)","width":8.72966981754937},"xaxis":"x","yaxis":"y","frame":null},{"x":[1150],"y":[0.000266549419324445],"mode":"markers","marker":{"color":"rgba(187,181,175,1)","size":[10.4668350323368],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(187,181,175,1)"}},"hover_info":"text","text":" State: WI <br> Doses per 100k: 1150 <br> pop density: 107.32815663","type":"scatter","name":"Wisconsin","textfont":{"color":"rgba(187,181,175,1)","size":10.4668350323368},"error_y":{"color":"rgba(187,181,175,1)","width":10.4668350323368},"error_x":{"color":"rgba(187,181,175,1)","width":10.4668350323368},"line":{"color":"rgba(187,181,175,1)","width":10.4668350323368},"xaxis":"x","yaxis":"y","frame":null},{"x":[1306],"y":[0.000279992288466733],"mode":"markers","marker":{"color":"rgba(179,179,179,1)","size":[5],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(179,179,179,1)"}},"hover_info":"text","text":" State: WY <br> Doses per 100k: 1306 <br> pop density: 5.9506106574","type":"scatter","name":"Wyoming","textfont":{"color":"rgba(179,179,179,1)","size":5},"error_y":{"color":"rgba(179,179,179,1)","width":5},"error_x":{"color":"rgba(179,179,179,1)","width":5},"line":{"color":"rgba(179,179,179,1)","width":5},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="interpret" class="section level1">
+<h1>Interpret</h1>
+<p>Although there are some states with a low number of doses per 100k and low PPR, there is hardly any state that has a high mean PPR with a high number of doses per 100k population. Considering the reason may be that the population size of these states is already quite small, if we ignore these states, we can say that a better vaccination status tends to result in a lower mean PPR.</p>
+<p>Besides that, as most big circles are above most small circles in the plot, the states with a high population density tend to have a higher mean PPR than the other states.</p>
+</div>
+
+<p>Copyright &copy; 2022, Xinyi Liu.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

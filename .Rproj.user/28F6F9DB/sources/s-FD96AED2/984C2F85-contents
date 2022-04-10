@@ -1,0 +1,60 @@
+---
+title: "The heatmap of positive increase rate"
+author: "Xinyi Liu"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+This page shows the third interactive visualization: the heatmap of the trend of positive increase rate of each state in the U.S.
+
+# Process COVID data
+
+```{r}
+library(data.table)
+library(dtplyr)
+library(dplyr)
+library(ggplot2)
+#library(mgcv)
+library(knitr)
+#library(magrittr)
+library(lubridate)
+library(tidyverse)
+library(plotly)
+library(widgetframe)
+```
+
+```{r}
+source("process_COVID_data.R")
+```
+
+For this visualization, I used two variables: `positiveIncrease` and `totalTestResultsIncrease` from the COVID tracking project which are the daily increase of confirmed cases and PCR tests calculated based on the previous day’s value.
+
+I also created a variable called `positiveIncreaseRate` which is calculated by dividing the `positiveIncrease` by the `totalTestResultsIncrease` (the rate will be 0 if `totalTestResultsIncrease` itself is 0) to calculate the daily confirmed case increase rate at state-level. PIR(`positiveIncreaseRate`) represents the percentage of daily PCR test results that are positive.
+
+# Display
+
+```{r}
+cv_states_mat <- merged_data %>%
+  select(name, End_of_Week, positiveIncreaseRate)
+
+PIR <- as.data.frame(pivot_wider(cv_states_mat, names_from = name, values_from = positiveIncreaseRate))
+
+PIR <- PIR %>%
+  column_to_rownames("End_of_Week") %>%
+  as.matrix()
+
+plot_ly(x=colnames(PIR), y=rownames(PIR), z=~PIR, type="heatmap")%>%
+  layout(title = "The heatmap of the trend of PIR",
+         hovermode = "compare")
+
+```
+# Interpret
+
+The heatmap shows that Idaho, Alabama and Iowa have a significant high PIR at the beginning of 2021. The PIR decreases from January to March for all states in general.

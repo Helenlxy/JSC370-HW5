@@ -1,0 +1,56 @@
+---
+title: "The trend of daily increase of confirmed cases"
+author: "Xinyi Liu"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+This page shows the first interactive visualization: the trend of daily increase of confirmed cases in each state in the U.S.
+
+# Process COVID data
+
+We mainly used 3 variables in this plot: `positiveIncrease` from the COVID tracking project which is the daily increase of confirmed cases as well as the date and state of each `positiveIncrease` record.
+
+```{r}
+library(data.table)
+library(dtplyr)
+library(dplyr)
+library(ggplot2)
+#library(mgcv)
+library(knitr)
+#library(magrittr)
+library(lubridate)
+library(tidyverse)
+library(plotly)
+library(widgetframe)
+```
+
+```{r}
+source("process_COVID_data.R")
+```
+
+
+# Display
+
+```{r}
+p1 <- ggplot(merged_data, aes(x=End_of_Week, y=positiveIncrease, colour = name)) +
+  geom_line()
+
+ggplotly(p1)%>%
+  layout(title = "positive case increase trend",
+         yaxis = list(title = "positive increase"),
+         xaxis = list(title = "date"),
+         hovermode = "compare")
+
+```
+
+# Interpret
+
+The PIR decreases from January to March for all states in general. But the fluctuation of the trend is not similar in each state. Some states like Texas even have an increase in the middle of February. California stands out in this plot as it has a high daily positive increase at the beginning of 2021. But the daily increase number sharply decreased to an average level of other states from January to March.

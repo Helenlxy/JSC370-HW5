@@ -1,0 +1,69 @@
+---
+title: "The relationship between vaccination, mean PPR and pop density"
+author: "Xinyi Liu"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+This page shows the second interactive visualization: the relationship between the vaccination status, the mean positive population rate and the population density of each state in the U.S.
+
+# Process COVID data
+
+```{r}
+library(data.table)
+library(dtplyr)
+library(dplyr)
+library(ggplot2)
+#library(mgcv)
+library(knitr)
+#library(magrittr)
+library(lubridate)
+library(tidyverse)
+library(plotly)
+library(widgetframe)
+```
+
+```{r}
+source("process_COVID_data.R")
+```
+
+For this visualization, I used 4 variables: `positiveIncrease` from the COVID tracking project which is the daily increase of confirmed cases, `Admin_Per_100K` from CDC which is the total number of doses administered per 100,000 census population based on the jurisdiction where the recipient lives, `population` and `pop_density` from us_census_data.
+
+I also created a variable called `positivePopRate` which is calculated by dividing the `positiveIncrease` by the `population` to calculate the daily confirmed patient rate at state-level and used the rate to reflect the severity of COVID-19 for each state. PPR(`positivePopRate`) represents the percentage of people that are confirmed to get COVID-19 in each state on each day.
+
+# Display
+
+The size of each circle reflects the population density of each state.
+
+```{r}
+tab %>%
+  #filter(name != "California") %>%
+  plot_ly(x = ~admin_per_100k, y=~mean_positivePopRate, 
+          type = 'scatter', mode = 'markers', color = ~name, 
+          size=~pop_density, sizes = c(5, 70), 
+          marker = list(sizemode="diameter", opacity=0.5),
+          hover_info = "text",
+          text = ~paste(" State:",  state, "<br>",
+                        "Doses per 100k:", admin_per_100k, "<br>",
+                        "pop density:", pop_density
+                        #sep = "<br>"
+                        ))%>%
+  layout(title = "Relationship between vaccine and mean positive population rate",
+         yaxis = list(title = "mean positivePopRate"),
+         xaxis = list(title = "the number of doses administered per 100k"),
+         hovermode = "compare")
+
+```
+
+# Interpret
+
+Although there are some states with a low number of doses per 100k and low PPR, there is hardly any state that has a high mean PPR with a high number of doses per 100k population. Considering the reason may be that the population size of these states is already quite small, if we ignore these states, we can say that a better vaccination status tends to result in a lower mean PPR.
+
+Besides that, as most big circles are above most small circles in the plot, the states with a high population density tend to have a higher mean PPR than the other states.

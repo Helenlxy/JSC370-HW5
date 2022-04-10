@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xinyi Liu" />
+
+
+<title>The heatmap of positive increase rate</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">JSC370 Homework 5</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chart-bar"></span>
+     
+    Interactive Visualizations
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="vis1.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 1
+      </a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="vis2.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 2
+      </a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="vis3.html">
+        <span class="fa fa-chart-line"></span>
+         
+        Visualization 3
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JSC370/jsc370-2022/">
+    <span class="fa fa-github fa-lg"></span>
+     
+    JSC370
+  </a>
+</li>
+<li>
+  <a href="https://github.com/Helenlxy/JSC370-HW5/">
+    <span class="fa fa-github fa-lg"></span>
+     
+    Homework 5
+  </a>
+</li>
+<li>
+  <a href="https://jsc370.github.io/jsc370-2022/">JSC370 Home</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">The heatmap of positive increase rate</h1>
+<h4 class="author">Xinyi Liu</h4>
+
+</div>
+
+
+<p>This page shows the third interactive visualization: the heatmap of the trend of positive increase rate of each state in the U.S.</p>
+<div id="process-covid-data" class="section level1">
+<h1>Process COVID data</h1>
+<p>For this visualization, I used two variables: <code>positiveIncrease</code> and <code>totalTestResultsIncrease</code> from the COVID tracking project which are the daily increase of confirmed cases and PCR tests calculated based on the previous day’s value.</p>
+<p>I also created a variable called <code>positiveIncreaseRate</code> which is calculated by dividing the <code>positiveIncrease</code> by the <code>totalTestResultsIncrease</code> (the rate will be 0 if <code>totalTestResultsIncrease</code> itself is 0) to calculate the daily confirmed case increase rate at state-level. PIR(<code>positiveIncreaseRate</code>) represents the percentage of daily PCR test results that are positive.</p>
+</div>
+<div id="display" class="section level1">
+<h1>Display</h1>
+<div id="htmlwidget-600865370c09044d91c8" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-600865370c09044d91c8">{"x":{"visdat":{"2a6471d3b66":["function () ","plotlyVisDat"]},"cur_data":"2a6471d3b66","attrs":{"2a6471d3b66":{"x":["Alabama","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"y":["2021-01-09","2021-01-16","2021-01-23","2021-01-30","2021-02-06","2021-02-13","2021-02-20","2021-02-27","2021-03-06"],"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"heatmap"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"The heatmap of the trend of PIR","hovermode":"compare","xaxis":{"domain":[0,1],"automargin":true,"title":[]},"yaxis":{"domain":[0,1],"automargin":true,"title":[]},"scene":{"zaxis":{"title":"PIR"}},"showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"colorbar":{"title":"PIR","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":["Alabama","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"y":["2021-01-09","2021-01-16","2021-01-23","2021-01-30","2021-02-06","2021-02-13","2021-02-20","2021-02-27","2021-03-06"],"z":[[0.454576073976545,0.201377261599974,0.259549010584445,0.140328776449748,0.0754609701743139,0.0629466020572444,0.105316588960746,0.140559308916731,0.3260130036883,0.517139565029526,0.0826798129273073,0.121378658983116,0.436939233278956,0.376656933929356,0.264283214160708,0.141325725647842,0.0720256498339631,0.0727932747420711,0.0728693427610753,0.0601780810108499,0.0669547134002302,0.228806663816524,0.177880122252065,0.0937394323331154,0.0963852054717957,0.175756170817501,0.107504725897921,0.103183706762509,0.114688514379484,0.0770085278194422,0.159082568285335,0.0757314192258768,0.18960767806028,0.214405808745852,0.0560490914791645,0.149950746300619,0.0689984017518918,0.16212393373771,0.223759924247942,0.237042431032068,0.24886064544397,0.235194441188068,0.0246529332736229,0.174781647926968,0.126355773455748,0.11054463142975,0.134245779115739,0.0814328539445224],[0.334659682608763,0.144672085351575,0.178623690509647,0.11393432814364,0.061349382538892,0.0719264722269225,0.0769714402477169,0.112212297373238,0.238260542493212,0.416437621505665,0.0633195871789837,0.0877408029073438,0.343354347939353,0.280971561088734,0.266026995174668,0.120626255343256,0.0645181111554886,0.0639340458770939,0.061851787148176,0.065495164146574,0.0530305297068709,0.262441657763032,0.127676622325422,0.0781336789483429,0.0886498359640106,0.128693362220313,0.0962443095599393,0.0970887187285037,0.128485652786095,0.0653842328153964,0.130998258125684,0.0452978056426332,0.149020880028312,0.209503104618609,0.0632681921439425,0.125785396364014,0.0529346803550248,0.141474063671641,0.173011136181673,0.192281247030281,0.170896014049222,0.213335021990927,0.0255693440610937,0.157264836700418,0.10210586360402,0.0762951248274538,0.0968935938384626,0.10840871330995],[0.327046108254162,0.136334861107594,0.165774225257385,0.0852424321820926,0.046410210812209,0.0609168207962823,0.0758861457254535,0.104312958905317,0.183056107682115,0.319669104069725,0.0518890622270307,0.0680975504546709,0.324010375549791,0.283944285482913,0.197834309001886,0.0843834235497798,0.052661928807431,0.0565920305854808,0.0500188598131149,0.0534636482212732,0.0465849573285832,0.268045784354807,0.101062149747773,0.0740018861993084,0.059556971898469,0.104749257078167,0.0948011717566248,0.0956956270551329,0.0620505265455339,0.0607147389918119,0.118974734102468,0.0445704665278455,0.124737648747059,0.170834950738461,0.0449261829246696,0.0992348158775705,0.041029376062151,0.111703453629908,0.147225862822193,0.15835025717919,0.159977257591861,0.180283900420857,0.0223915935688998,0.184201390517832,0.0722523625151519,0.0712045034592411,0.0704021662204991,0.0629597307068944],[0.330602212208111,0.119009537164266,0.139483060497349,0.0693087775830619,0.0490497525549797,0.0595239256145962,0.0683599992479648,0.0985397222590255,0.174400970579315,0.257399232940155,0.0400583505998638,0.0597968217480022,0.254670285805524,0.256515074093,0.189953876867298,0.0904891015417331,0.0357376274108993,0.04648576743606,0.0375782849953077,0.0473346010561215,0.0376587241905335,0.225413807024627,0.0927562389985436,0.0534666969765856,0.0466365483550214,0.109924279503642,0.0664735317355807,0.0998850125401957,0.0516161258767457,0.0526541127490422,0.112494750282569,0.0412724866428116,0.111817941110576,0.13579971586216,0.0411069453084282,0.110573783412525,0.0335918293016056,0.106478580176372,0.105298202225816,0.138446748710272,0.140305964761686,0.13270136213712,0.0190600090860282,0.144516584576172,0.0662225840107314,0.0681979057336035,0.0586105972480635,0.0183418688744539],[0.287481951273006,0.0924139616457261,0.11643118525092,0.0554943667650352,0.0456862832361653,0.0703101498104807,0.057792191340039,0.0780988569266638,0.154980715847397,0.250503114518448,0.033865791368936,0.0499356065252054,0.270137060293025,0.242746205435934,0.175861708430628,0.0716779532626711,0.0323566052869601,0.0422075286179492,0.0289067639184427,0.0433371272666012,0.0352677882389258,0.165819280140951,0.0812566221657131,0.0544689624428842,0.0353972412251841,0.095751255923044,0.051213449460162,0.080790141124009,0.0407776039412803,0.0458156807561198,0.118999030115377,0.0310431408354257,0.090916932011759,0.138868573100271,0.040549613265766,0.0923270334534478,0.0274982524019313,0.0974617753706917,0.104599625726386,0.114722665458438,0.165230370949121,0.1171504256796,0.033982699716508,0.119666103845501,0.0561524153753176,0.0545217662219956,0.0502658477589647,0.0188729893245782],[0.198744040004652,0.0630315740417104,0.111982353042549,0.0414621839405087,0.0432788380960882,0.0345928338762215,0.0582767323989904,0.0720167778992163,0.126794795654062,0.241386689492831,0.0294306309048805,0.0346067817840208,0.260060286360211,0.221075185040904,0.132108390371265,0.0523482925599899,0.0243867321778882,0.0333963766673303,0.0240996228636135,0.0359869992559815,0.0324575501362588,0.144275640360884,0.0636589493392864,0.0504083716181725,0.0476083598484348,0.0717908133600362,0.0512917374971143,0.0720201337073295,0.0263207450268771,0.0390475400229888,0.0877156777707197,0.0288175106851444,0.0783547988388899,0.133594684723672,0.0303651233859144,0.0785500264379296,0.0237855743049895,0.0981040070856409,0.0899488641126666,0.0955954885662056,0.114640270052737,0.107879395724942,0.0191681735985533,0.122935928441662,0.0452353736444184,0.043688360132252,0.045593540628758,-0.00593637424526866],[0.212294372294372,0.0500327705415909,0.121654279330628,0.031485360198939,0.0434166189840422,0.0290209702187649,0.0473437579585392,0.0669234905603326,0.109880248947849,0.21021897810219,0.0279173531961636,0.0341728110711515,0.13385908477742,0.227032734952481,0.181124726121886,0.044151321438794,0.0163775827517103,0.0290339636725554,0.0189945028126075,0.0353766967559671,0.0323693703475816,0.10639923591213,0.0601106600416935,0.0485303675886474,0.0278131806082117,0.0538737814263725,0.0553448635132319,0.0812379951150493,0.0336359439913833,0.0352679164311277,0.0836438210338458,0.0445893433445301,0.0773137845267705,0.135373722889407,0.032238172759114,0.0710483573274271,0.0200245484832544,0.101562893733306,0.104031209362809,0.108497143013369,0.0713942842424455,0.0971929949709313,0.0157648313874237,0.0992597600601574,0.031685454073489,0.0379850759883965,0.0295986496840238,0.0377609108159393],[0.202571082879613,0.0420320172637791,0.0956597264107699,0.0253917505090302,0.0376333771159551,0.0337586246011353,0.0513045724618962,0.0624387557081281,0.125797001550922,0.237251092763477,0.0241717124134946,0.0234144377851328,0.207313432835821,0.176496259351621,0.0817329993505891,0.0407963868830396,0.0182186234817814,0.0245355532800511,0.0185319970886289,0.038221098408724,0.0346833977784893,0.0825045014147304,0.0382815968309258,0.0415797524683632,0.0339233297593729,0.0505963072059774,0.0413888487500774,0.0696255389176346,0.0297504561818809,0.0318252592983249,0.067922139113022,0.0333776756560648,0.0568538255628726,0.0582672814976944,0.027335685883681,0.0587843782771171,0.0219379530898465,0.072554475025377,0.11706102117061,0.0949821650049515,0.156829273024046,0.0805113559091527,0.0146565914995736,0.0829089076343573,0.0357864183346435,0.0377364916642542,0.0218329949369041,0.0408500734933856],[0.195071035082633,0.0392818089999249,0.0598661840517714,0.0206450286004123,0.0445188212703419,0.0243521839621148,0.0419002350753016,0.0616971458970788,0.111160962539811,0.254001852096838,0.0235297396400467,0.0249970850187904,0.179998489311882,0.136657547873663,0.0877153505379368,0.0343945994376989,0.0178076215997258,0.0246881605054182,0.0164422979759501,0.0449512124267332,0.0273992334799496,0.122265122265122,0.0291557929234691,0.037334224896913,0.0354950771279947,0.0383046501689911,0.0513035600442908,0.0676146697779415,0.0204959262411975,0.0315242846835975,0.0604536239791686,0.0375138157467005,0.0495930050826193,0.0715051733252775,0.00699312888482951,0.0690153496077766,0.0202944920932726,0.0604236415142931,0.105237633365664,0.0805269730027975,0.127402885067166,0.0659866515552198,0.0155305679596851,0.0733968007811378,0.0322857215980345,0.0269198073108529,0.0251532336598499,0.0329172298640375]],"type":"heatmap","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="interpret" class="section level1">
+<h1>Interpret</h1>
+<p>The heatmap shows that Idaho, Alabama and Iowa have a significant high PIR at the beginning of 2021. The PIR decreases from January to March for all states in general.</p>
+</div>
+
+<p>Copyright &copy; 2022, Xinyi Liu.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
